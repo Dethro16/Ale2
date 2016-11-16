@@ -24,7 +24,7 @@ namespace ALE2
 
             Automata automata = new Automata(stateList, alphabet, transList);
 
-            string[] lines = System.IO.File.ReadAllLines(path);
+            string[] lines = File.ReadAllLines(path);
 
             int count = 0;
             foreach (string line in lines)
@@ -162,29 +162,6 @@ namespace ALE2
             return words;
         }
 
-
-
-        public void GenerateCode()
-        {
-            /*
-             *   rankdir=LR;
-  "" [shape=none]
-  "A" [shape=doublecircle]
-  "B" [shape=doublecircle]
-  "C" [shape=circle]
-  "SINK" [shape=circle]
-
-  "" -> "C"
-  "A" -> "A" [label="a"]
-  "B" -> "SINK" [label="a [x/ε]"]
-  "C" -> "B" [label="b [y/z]"]
-  "C" -> "A" [label="ε"]
-  "C" -> "A" [label="d"]
-  "C" -> "C" [label="a"]
-
-             */
-        }
-
         public void CreatePicture(string code)
         {
             string saveLocation = @"C:\Program Files (x86)\Graphviz2.38\bin";
@@ -205,7 +182,6 @@ namespace ALE2
             Process proc = Process.Start(processInfo);
             proc.WaitForExit();
         }
-
 
     }
 }

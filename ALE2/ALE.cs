@@ -100,12 +100,6 @@ namespace ALE2
         /// <param name="e"></param>
         private void addToFavoritesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (true)
-            {
-
-            }
-            string text = "";
-
             var logFile = File.ReadAllLines(@"..\..\Favourites.txt");
             List<string> LogList = new List<string>(logFile);
 
