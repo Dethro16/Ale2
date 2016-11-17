@@ -90,5 +90,22 @@ namespace ALE2
             return true;
         }
 
+        /// <summary>
+        /// Loops through all out transition to see if the transition character is equal
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns>end state object</returns>
+        public State CheckCharacter(char c)
+        {
+            foreach (Transition trans in OutTrans)
+            {
+                if (trans.TransitionChar == c)
+                {
+                    return trans.EndState;
+                }
+            }
+            return null;
+        }
+
     }
 }

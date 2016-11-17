@@ -40,6 +40,11 @@
             this.cBDirectory = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.lbDfa = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.tBString = new System.Windows.Forms.TextBox();
+            this.btnParseString = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.lbAccepted = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -84,9 +89,9 @@
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(505, 3);
+            this.richTextBox1.Location = new System.Drawing.Point(516, 3);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(165, 143);
+            this.richTextBox1.Size = new System.Drawing.Size(154, 143);
             this.richTextBox1.TabIndex = 7;
             this.richTextBox1.Text = "";
             // 
@@ -153,11 +158,61 @@
             this.lbDfa.Text = "True/False";
             this.lbDfa.TextChanged += new System.EventHandler(this.lbDfa_TextChanged);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 79);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(37, 13);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "String:";
+            // 
+            // tBString
+            // 
+            this.tBString.Location = new System.Drawing.Point(78, 76);
+            this.tBString.Name = "tBString";
+            this.tBString.Size = new System.Drawing.Size(199, 20);
+            this.tBString.TabIndex = 13;
+            // 
+            // btnParseString
+            // 
+            this.btnParseString.Location = new System.Drawing.Point(283, 76);
+            this.btnParseString.Name = "btnParseString";
+            this.btnParseString.Size = new System.Drawing.Size(94, 23);
+            this.btnParseString.TabIndex = 14;
+            this.btnParseString.Text = "Parse string";
+            this.btnParseString.UseVisualStyleBackColor = true;
+            this.btnParseString.Click += new System.EventHandler(this.btnParseString_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(383, 79);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(56, 13);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Accepted:";
+            // 
+            // lbAccepted
+            // 
+            this.lbAccepted.AutoSize = true;
+            this.lbAccepted.Location = new System.Drawing.Point(445, 79);
+            this.lbAccepted.Name = "lbAccepted";
+            this.lbAccepted.Size = new System.Drawing.Size(59, 13);
+            this.lbAccepted.TabIndex = 16;
+            this.lbAccepted.Text = "True/False";
+            this.lbAccepted.TextChanged += new System.EventHandler(this.lbAccepted_TextChanged);
+            // 
             // ALE
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(682, 502);
+            this.Controls.Add(this.lbAccepted);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.btnParseString);
+            this.Controls.Add(this.tBString);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.lbDfa);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.cBDirectory);
@@ -193,6 +248,11 @@
         private System.Windows.Forms.ComboBox cBDirectory;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lbDfa;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox tBString;
+        private System.Windows.Forms.Button btnParseString;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lbAccepted;
     }
 }
 

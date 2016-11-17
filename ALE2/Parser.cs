@@ -156,12 +156,15 @@ namespace ALE2
                     return words;
                 default:
                     break;
-                    //"Z,a --> A"
             }
 
             return words;
         }
 
+        /// <summary>
+        /// Creates the picture based on code
+        /// </summary>
+        /// <param name="code"></param>
         public void CreatePicture(string code)
         {
             string saveLocation = @"C:\Program Files (x86)\Graphviz2.38\bin";

@@ -14,6 +14,7 @@ namespace ALE2
     public partial class ALE : Form
     {
         Parser parser = new Parser();
+        Automata automata;
 
         public ALE()
         {
@@ -27,7 +28,7 @@ namespace ALE2
                 MessageBox.Show("Select a directory and/or file!");
                 return;
             }
-            Automata automata = parser.ParseFiniteAutomata(cBDirectory.Text + "\\" + cBFiles.Text);
+            automata = parser.ParseFiniteAutomata(cBDirectory.Text + "\\" + cBFiles.Text);
             lbDfa.Text = automata.CheckDFA().ToString();
 
             automata.GeneratePicture();
@@ -143,6 +144,15 @@ namespace ALE2
             richTextBox1.Text = File.ReadAllText(cBDirectory.Text + "\\" + cBFiles.Text);
         }
 
+
+
+        private void btnParseString_Click(object sender, EventArgs e)
+        {
+            lbAccepted.Text = automata.CheckInputString(tBString.Text).ToString();
+        }
+
+
+
         private void lbDfa_TextChanged(object sender, EventArgs e)
         {
             if (lbDfa.Text == "True")
@@ -152,6 +162,18 @@ namespace ALE2
             else
             {
                 lbDfa.BackColor = Color.Red;
+            }
+        }
+
+        private void lbAccepted_TextChanged(object sender, EventArgs e)
+        {
+            if (lbAccepted.Text == "True")
+            {
+                lbAccepted.BackColor = Color.Green;
+            }
+            else
+            {
+                lbAccepted.BackColor = Color.Red;
             }
         }
     }

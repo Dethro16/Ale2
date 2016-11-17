@@ -149,6 +149,35 @@ namespace ALE2
             return true;
         }
 
+
+        /// <summary>
+        /// Loops through all characters, and calls the state CheckCharacter method on it
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public bool CheckInputString(string input)
+        {
+            State tempState = null;
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (i == 0)
+                {
+                    tempState = StateList[0].CheckCharacter(input[i]);
+                }
+                else
+                {
+                    tempState = tempState.CheckCharacter(input[i]);
+                }
+
+                if (tempState == null)
+                {
+                    return false;
+                }
+            }
+            return tempState.IsFinal;
+        }
+
         /// <summary>
         /// Creates the picture
         /// </summary>
@@ -157,12 +186,12 @@ namespace ALE2
         {
             string code = "digraph myAutomaton {\nrankdir = LR;\n\"" + "\" [shape = none]";
             int stateCount = 0;
+
             foreach (State state in StateList)
             {
-
                 code += "\n" + state.GraphValue;
-
             }
+
             foreach (Transition transition in TransitionList)
             {
                 if (stateCount == 0)
@@ -177,7 +206,6 @@ namespace ALE2
             }
 
             code += "\n}";
-
 
             string saveLocation = @"C:\Program Files (x86)\Graphviz2.38\bin";
             //code = "graph logic {node [ fontname = \"Arial\" ] " + code + "}";
@@ -197,7 +225,6 @@ namespace ALE2
             Process proc = Process.Start(processInfo);
             proc.WaitForExit();
         }
-
 
     }
 }
