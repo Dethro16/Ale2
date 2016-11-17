@@ -75,6 +75,12 @@ namespace ALE2
 
             DialogResult result = fbd.ShowDialog();
 
+            if (result != DialogResult.OK)
+            {
+                MessageBox.Show("Try again.");
+                return;
+            }
+
             if (!string.IsNullOrWhiteSpace(fbd.SelectedPath))
             {
                 files = GetFilesFromDir(fbd);
@@ -147,17 +153,6 @@ namespace ALE2
             {
                 lbDfa.BackColor = Color.Red;
             }
-        }
-    }
-
-    public class ComboboxItem
-    {
-        public string Text { get; set; }
-        public object Value { get; set; }
-
-        public override string ToString()
-        {
-            return Text;
         }
     }
 }

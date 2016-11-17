@@ -117,11 +117,11 @@ namespace ALE2
             {
                 if (state.IsFinal)
                 {
-                    state.GraphValue = "\"" + state.StringValue + "\"" + "[shape = doublecircle]";
+                    state.GraphValue = "\"" + state.StringValue + "\"" + " [shape = doublecircle]";
                 }
                 else
                 {
-                    state.GraphValue = "\"" + state.StringValue + "\"" + "[shape = circle]";
+                    state.GraphValue = "\"" + state.StringValue + "\"" + " [shape = circle]";
                 }
             }
 
@@ -155,15 +155,25 @@ namespace ALE2
         /// <returns></returns>
         public void GeneratePicture()
         {
-            string code = "digraph myAutomaton {\nrankdir = LR;\n\"" + "\"[shape = none]";
-
+            string code = "digraph myAutomaton {\nrankdir = LR;\n\"" + "\" [shape = none]";
+            int stateCount = 0;
             foreach (State state in StateList)
             {
+
                 code += "\n" + state.GraphValue;
+
             }
             foreach (Transition transition in TransitionList)
             {
+                if (stateCount == 0)
+                {
+                    code += "\n" + "\"" + "\"" + " -> " + "\"" + StateList[0].StringValue + "\"";
+                }
+
                 code += "\n" + transition.GraphValue;
+
+
+                stateCount++;
             }
 
             code += "\n}";
