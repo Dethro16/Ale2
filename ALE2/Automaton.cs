@@ -196,11 +196,18 @@ namespace ALE2
                     int index12 = 0;
                     foreach (Transition item in state.OutTrans)
                     {
-                        if (state.CurrentTransitionIndex != input.Length && (item.TransitionChar == input[index]))
+                        if (state.CurrentTransitionIndex != input.Length && (item.CanTravel(input[index])))
                         {
                             index12++;
                             item.id = index;
-                            item.EndState.CurrentTransitionIndex = index + 1;
+                            if (item.TransitionChar == '_')
+                            {
+                                item.EndState.CurrentTransitionIndex = index;
+                            }
+                            else
+                            {
+                                item.EndState.CurrentTransitionIndex = index + 1;
+                            }
                             q.Enqueue(item.EndState);
                         }
                         else if (item.TransitionChar == '_')
@@ -209,6 +216,10 @@ namespace ALE2
                             item.id = index;
                             item.EndState.CurrentTransitionIndex = index;
                             q.Enqueue(item.EndState);
+                        }
+                        if (input == "_" && state.IsFinal)
+                        {
+                            return true;
                         }
                         if (state.IsFinal && state.CurrentTransitionIndex == input.Length)
                         {
