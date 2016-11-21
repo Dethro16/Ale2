@@ -14,6 +14,37 @@ namespace ALE2
         List<string> alphabet;
         List<Transition> transitionList;
 
+        bool dfa;
+        bool finite;
+        List<Word> words = new List<Word>();
+
+        /// <summary>
+        /// Contains all states
+        /// </summary>
+        public bool Dfa
+        {
+            get { return dfa; }
+            set { dfa = value; }
+        }
+
+        /// <summary>
+        /// Contains all states
+        /// </summary>
+        public bool Finite
+        {
+            get { return finite; }
+            set { finite = value; }
+        }
+
+        /// <summary>
+        /// Contains all states
+        /// </summary>
+        public List<Word> Words
+        {
+            get { return words; }
+            set { words = value; }
+        }
+
         /// <summary>
         /// Contains all states
         /// </summary>

@@ -68,6 +68,34 @@ namespace ALE2
                 {
                     //Finished with transitions
                 }
+                else if (CheckContains(line, "dfa:"))
+                {
+                    if (StripValues(line, 5)[1] == "y")
+                    {
+                        automata.Dfa = true;
+                    }
+                    else
+                    {
+                        automata.Dfa = false;
+                    }
+
+                }
+                else if (CheckContains(line, "finite:"))
+                {
+                    if (StripValues(line, 5)[1] == "y")
+                    {
+                        automata.Finite = true;
+                    }
+                    else
+                    {
+                        automata.Finite = false;
+                    }
+                }
+                else if (CheckContains(line, "words:"))
+                {
+                    List<string> temp = lines.Skip(count + 1).ToList();
+                    automata.Words = ParseWords(temp, automata);
+                }
 
                 count++;
             }
@@ -97,6 +125,33 @@ namespace ALE2
                 info = StripValues(item, 4);
 
                 temp.Add(new Transition(automaton.FindState(info[0]), automaton.FindState(info[2]), info[1][0]));
+            }
+
+            return temp;
+        }
+
+        private List<Word> ParseWords(List<string> lines, Automaton automaton)
+        {
+            List<Word> temp = new List<Word>();
+            foreach (var item in lines)
+            {
+                if (item == "end.")
+                {
+                    break;
+                }
+                string val = item.Split(',')[0];
+                string ac = item.Split(',')[1];
+                bool temp1;
+                if (ac == "n")
+                {
+                    temp1 = false;
+                }
+                else
+                {
+                    temp1 = true;
+                }
+
+                temp.Add(new Word(val, temp1));
             }
 
             return temp;
@@ -153,6 +208,9 @@ namespace ALE2
                     words = words[0].Split(',').ToList();
                     words = words.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
                     words = words.Select(c => { c = c.Trim(); return c; }).ToList();
+                    return words;
+                case 5:
+                    words = line.Split(':').ToList();
                     return words;
                 default:
                     break;
