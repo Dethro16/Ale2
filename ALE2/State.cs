@@ -12,7 +12,7 @@ namespace ALE2
         bool isFinal = false;
         List<Transition> inTrans = new List<Transition>();
         List<Transition> outTrans = new List<Transition>();
-
+        int currentTransIndex;
         string graphValue;
 
         /// <summary>
@@ -32,6 +32,16 @@ namespace ALE2
             get { return isFinal; }
             set { isFinal = value; }
         }
+
+        /// <summary>
+        /// Current Transition index
+        /// </summary>
+        public int CurrentTransitionIndex
+        {
+            get { return currentTransIndex; }
+            set { currentTransIndex = value; }
+        }
+
 
         /// <summary>
         /// All incoming transitions

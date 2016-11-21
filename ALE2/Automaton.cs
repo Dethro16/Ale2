@@ -132,7 +132,6 @@ namespace ALE2
 
         }
 
-
         /// <summary>
         /// Checks if the graph is a DFA
         /// </summary>
@@ -149,51 +148,81 @@ namespace ALE2
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ClearStates()
+        {
+            foreach (State state in StateList)
+            {
+                state.CurrentTransitionIndex = 0;
+            }
+        }
 
         /// <summary>
-        /// Loops through all characters, and calls the state CheckCharacter method on it
+        /// 
         /// </summary>
+        /// <param name="state"></param>
         /// <param name="input"></param>
         /// <returns></returns>
-        public bool CheckInputString(string input)
+        public bool BFSTraversal(State state, string input)
         {
-            State tempState = null;
-            List<State> stateList = new List<State>();
-
-            if (input == "")//Epsilon
+            if (input == "")
             {
                 input = "_";
             }
+            Queue<State> q = new Queue<State>();
+            q.Enqueue(state);
 
-            for (int i = 0; i < input.Length; i++)
+            int index = 0;
+            while (q.Count > 0)
             {
-                if (i == 0)
+                state = q.Dequeue();
+                index = state.CurrentTransitionIndex;
+                if (index == input.Length)
                 {
-                    tempState = StateList[0].CheckCharacter(input[i]);
-                    stateList.Add(tempState);
-                }
-                else
-                {
-                    tempState = tempState.CheckCharacter(input[i]);
-                    stateList.Add(tempState);
+                    if (state.IsFinal)
+                    {
+                        return true;
+                    }
+                    else if (!(state.OutTrans.Count > 0))
+                    {
+                        continue;
+                    }
                 }
 
-                //if (tempState == null)
-                //{
-                //    return false;
-                //}
-            }
-
-            foreach (State item in stateList)
-            {
-                if (item.IsFinal)
+                if (state.OutTrans.Count > 0)
+                {
+                    int index12 = 0;
+                    foreach (Transition item in state.OutTrans)
+                    {
+                        if (state.CurrentTransitionIndex != input.Length && (item.TransitionChar == input[index]))
+                        {
+                            index12++;
+                            item.id = index;
+                            item.EndState.CurrentTransitionIndex = index + 1;
+                            q.Enqueue(item.EndState);
+                        }
+                        else if (item.TransitionChar == '_')
+                        {
+                            index12++;
+                            item.id = index;
+                            item.EndState.CurrentTransitionIndex = index;
+                            q.Enqueue(item.EndState);
+                        }
+                        if (state.IsFinal && state.CurrentTransitionIndex == input.Length)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else if (state.IsFinal && index == input.Length)
                 {
                     return true;
                 }
 
             }
             return false;
-            //return tempState.IsFinal;
         }
 
         /// <summary>

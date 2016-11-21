@@ -14,7 +14,7 @@ namespace ALE2
 
         string graphValue;
 
-
+        public int id;
         /// <summary>
         /// Initial transition state
         /// </summary>
@@ -32,6 +32,7 @@ namespace ALE2
             get { return transitionChar; }
             set { transitionChar = value; }
         }
+
 
         /// <summary>
         /// Ending state of transition
@@ -57,6 +58,19 @@ namespace ALE2
             InitialState = initialState;
             EndState = endState;
             TransitionChar = transitionChar;
+        }
+
+
+        public bool CanTravel(char c)
+        {
+            if (TransitionChar == c || TransitionChar == '_')
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }

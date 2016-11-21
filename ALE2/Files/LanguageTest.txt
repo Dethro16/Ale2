@@ -1,0 +1,14 @@
+alphabet: ab
+states: A,B,C,D,E,F,G,H
+final: H
+transitions:
+A,a --> B
+A,_ --> D
+A,a --> F
+B,_ --> C
+C,a --> H
+D,_ --> E
+E,a --> H
+F,a --> G
+G,_ --> H
+end.

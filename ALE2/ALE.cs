@@ -148,7 +148,8 @@ namespace ALE2
 
         private void btnParseString_Click(object sender, EventArgs e)
         {
-            lbAccepted.Text = automata.CheckInputString(tBString.Text).ToString();
+            automata.ClearStates();
+            lbAccepted.Text = automata.BFSTraversal(automata.StateList[0], tBString.Text).ToString();
         }
 
 
