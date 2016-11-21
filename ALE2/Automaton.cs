@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ALE2
 {
-    class Automata
+    class Automaton
     {
         List<State> stateList;
         List<string> alphabet;
@@ -41,7 +41,7 @@ namespace ALE2
             set { transitionList = value; }
         }
 
-        public Automata(List<State> _stateList, List<string> _alphabet, List<Transition> _transitionList)
+        public Automaton(List<State> _stateList, List<string> _alphabet, List<Transition> _transitionList)
         {
             stateList = _stateList;
             alphabet = _alphabet;
@@ -158,24 +158,42 @@ namespace ALE2
         public bool CheckInputString(string input)
         {
             State tempState = null;
+            List<State> stateList = new List<State>();
+
+            if (input == "")//Epsilon
+            {
+                input = "_";
+            }
 
             for (int i = 0; i < input.Length; i++)
             {
                 if (i == 0)
                 {
                     tempState = StateList[0].CheckCharacter(input[i]);
+                    stateList.Add(tempState);
                 }
                 else
                 {
                     tempState = tempState.CheckCharacter(input[i]);
+                    stateList.Add(tempState);
                 }
 
-                if (tempState == null)
-                {
-                    return false;
-                }
+                //if (tempState == null)
+                //{
+                //    return false;
+                //}
             }
-            return tempState.IsFinal;
+
+            foreach (State item in stateList)
+            {
+                if (item.IsFinal)
+                {
+                    return true;
+                }
+
+            }
+            return false;
+            //return tempState.IsFinal;
         }
 
         /// <summary>

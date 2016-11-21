@@ -16,13 +16,13 @@ namespace ALE2
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public Automata ParseFiniteAutomata(string path)
+        public Automaton ParseFiniteAutomata(string path)
         {
             List<State> stateList = new List<State>();
             List<Transition> transList = new List<Transition>();
             List<string> alphabet = new List<string>();
 
-            Automata automata = new Automata(stateList, alphabet, transList);
+            Automaton automata = new Automaton(stateList, alphabet, transList);
 
             string[] lines = File.ReadAllLines(path);
 
@@ -84,7 +84,7 @@ namespace ALE2
         /// <param name="lines"></param>
         /// <param name="automaton"></param>
         /// <returns></returns>
-        private List<Transition> ParseTransitions(List<string> lines, Automata automaton)
+        private List<Transition> ParseTransitions(List<string> lines, Automaton automaton)
         {
             List<Transition> temp = new List<Transition>();
             foreach (var item in lines)

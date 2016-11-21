@@ -14,7 +14,7 @@ namespace ALE2
     public partial class ALE : Form
     {
         Parser parser = new Parser();
-        Automata automata;
+        Automaton automata;
 
         public ALE()
         {

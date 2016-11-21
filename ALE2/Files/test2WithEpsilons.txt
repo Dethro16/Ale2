@@ -1,0 +1,19 @@
+# Standard test case from the LabManual
+
+alphabet: ab
+states: A,B,C,D
+final: D
+transitions:
+A,_ --> B
+B,_ --> C
+C,a --> D
+D,b --> D 
+end.
+
+dfa:n
+finite:n
+words:
+bbbbbbbbbb,y
+a,y
+ab,n
+end.

@@ -99,6 +99,10 @@ namespace ALE2
         {
             foreach (Transition trans in OutTrans)
             {
+                if (trans.TransitionChar == '_')//epsilon case
+                {
+                    //Get the end state but do not wipe the character
+                }
                 if (trans.TransitionChar == c)
                 {
                     return trans.EndState;
