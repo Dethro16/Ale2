@@ -29,11 +29,17 @@ namespace ALE2
                 return;
             }
             automata = parser.ParseFiniteAutomata(cBDirectory.Text + "\\" + cBFiles.Text);
+            rTBTestCase.Clear();
+            AppendToRTB(rTBTestCase, new List<string>() { automata.CheckTestDFA() });
+            AppendToRTB(rTBTestCase, automata.CheckTestWords());
+            automata.CheckTestWords();
+
+
             lbDfa.Text = automata.CheckDFA().ToString();
 
             automata.GeneratePicture();
 
-            pictureBox1.ImageLocation = @"C:\Program Files (x86)\Graphviz2.38\bin\abc.png";
+            pictureBox1.ImageLocation = AppDomain.CurrentDomain.BaseDirectory + "abc.png";
         }
 
         /// <summary>
@@ -46,16 +52,26 @@ namespace ALE2
         {
             List<string> temp = new List<string>();
 
-            if (fbd != null)
+            try
             {
-                temp = Directory.GetFiles(fbd.SelectedPath).ToList();
+                if (fbd != null)
+                {
+                    temp = Directory.GetFiles(fbd.SelectedPath).ToList();
 
-                MessageBox.Show("Files found: " + temp.Count.ToString(), "Message");
+                    MessageBox.Show("Files found: " + temp.Count.ToString(), "Message");
+                }
+                else
+                {
+                    temp = Directory.GetFiles(possiblePath).ToList();
+                }
+
             }
-            else
+            catch (System.IO.DirectoryNotFoundException)
             {
-                temp = Directory.GetFiles(possiblePath).ToList();
+                return null;
+                //throw;
             }
+
 
 
             List<string> files = new List<string>();
@@ -100,6 +116,23 @@ namespace ALE2
             cBDirectory.Refresh();
         }
 
+        private void AppendToRTB(RichTextBox textBox, List<string> temp)
+        {
+            foreach (var item in temp)
+            {
+                if (item.Contains('X'))//wrong
+                {
+                    RichTextBoxExtensions.AppendText(rTBTestCase, item, Color.Red, this.Font);
+                    textBox.AppendText("\n");
+                }
+                else if (item.Contains('V'))
+                {
+                    RichTextBoxExtensions.AppendText(rTBTestCase, item, Color.Green, this.Font);
+                    textBox.AppendText("\n");
+                }
+            }
+        }
+
         /// <summary>
         /// Add filepath to favourites WIP
         /// </summary>
@@ -131,9 +164,19 @@ namespace ALE2
 
         private void cBDirectory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            cBFiles.Items.Clear();
+            List<string> fileList = GetFilesFromDir(null, cBDirectory.SelectedItem.ToString());
+            if (fileList == null)
+            {
+                MessageBox.Show("Directory does not exist!");
+                cBFiles.SelectedIndex = -1;
+                cBFiles.Items.Clear();
+                rTBText.Clear();
+                rTBTestCase.Clear();
+                tBString.Clear();
+                return;
 
-            foreach (var item in GetFilesFromDir(null, cBDirectory.SelectedItem.ToString()))
+            }
+            foreach (var item in fileList)
             {
                 cBFiles.Items.Add(item);
             }
@@ -141,18 +184,18 @@ namespace ALE2
 
         private void cBFiles_SelectedIndexChanged(object sender, EventArgs e)
         {
-            richTextBox1.Text = File.ReadAllText(cBDirectory.Text + "\\" + cBFiles.Text);
+            if (cBFiles.SelectedIndex == -1)
+            {
+                return;
+            }
+            rTBText.Text = File.ReadAllText(cBDirectory.Text + "\\" + cBFiles.Text);
         }
-
-
 
         private void btnParseString_Click(object sender, EventArgs e)
         {
             automata.ClearStates();
             lbAccepted.Text = automata.BFSTraversal(automata.StateList[0], tBString.Text).ToString();
         }
-
-
 
         private void lbDfa_TextChanged(object sender, EventArgs e)
         {
@@ -177,5 +220,19 @@ namespace ALE2
                 lbAccepted.BackColor = Color.Red;
             }
         }
+    }
+}
+
+public static class RichTextBoxExtensions
+{
+    public static void AppendText(this RichTextBox box, string text, Color color, Font font)
+    {
+        box.SelectionStart = box.TextLength;
+        box.SelectionLength = 0;
+
+        box.SelectionColor = color;
+        box.SelectionFont = font;
+        box.AppendText(text);
+        box.SelectionColor = box.ForeColor;
     }
 }

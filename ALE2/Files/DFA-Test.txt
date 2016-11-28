@@ -1,0 +1,18 @@
+alphabet: ab
+states: A,B
+final: B
+transitions:
+A,a --> B
+A,b --> A
+B,a --> A
+B,b --> B
+end.
+
+dfa:y
+finite:n
+words:
+bbbbbbbbbb,y
+a,y
+ab,n
+end.
+

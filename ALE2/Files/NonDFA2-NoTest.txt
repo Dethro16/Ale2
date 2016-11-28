@@ -1,0 +1,15 @@
+alphabet: ab
+states: A1,A2,A3,A4 
+final: A4
+transitions:
+A1,a --> A2
+A1,a --> A4
+A1,b --> A2
+A2,a --> A2
+A2,a --> A3
+A2,b --> A2
+A3,b --> A3
+A3,a --> A4
+A4,b --> A4
+A4,_ --> A1
+end.

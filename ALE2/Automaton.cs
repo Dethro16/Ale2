@@ -193,6 +193,51 @@ namespace ALE2
         /// <summary>
         /// 
         /// </summary>
+        /// <returns></returns>
+        public string CheckTestDFA()
+        {
+            if (CheckDFA() == Dfa)
+            {
+                return "DFA: " + Dfa + " V";
+            }
+            else
+            {
+                return "DFA: " + Dfa + " X";
+            }
+        }
+
+        public void ClearAllStates()
+        {
+            foreach (var state in StateList)
+            {
+                state.CurrentTransitionIndex = 0;
+            }
+        }
+
+        public List<string> CheckTestWords()
+        {
+            List<string> checkedWords = new List<string>();
+            for (int i = 0; i < Words.Count; i++)
+            {
+                bool temp = BFSTraversal(StateList[0], Words[i].StringValue);
+                ClearAllStates();
+                if (Words[i].Accepted == temp)
+                {
+                    checkedWords.Add("Word: " + i + " " + Words[i].StringValue + " " + Words[i].Accepted + ": V");
+                }
+                else
+                {
+                    checkedWords.Add("Word: " + i + " " + Words[i].StringValue + " " + Words[i].Accepted + ": X");
+                }
+                Words[i].IsAccepted = temp;
+            }
+
+            return checkedWords;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="state"></param>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -202,6 +247,7 @@ namespace ALE2
             {
                 input = "_";
             }
+
             Queue<State> q = new Queue<State>();
             q.Enqueue(state);
 
@@ -224,12 +270,10 @@ namespace ALE2
 
                 if (state.OutTrans.Count > 0)
                 {
-                    int index12 = 0;
                     foreach (Transition item in state.OutTrans)
                     {
                         if (state.CurrentTransitionIndex != input.Length && (item.CanTravel(input[index])))
                         {
-                            index12++;
                             item.id = index;
                             if (item.TransitionChar == '_')
                             {
@@ -243,7 +287,6 @@ namespace ALE2
                         }
                         else if (item.TransitionChar == '_')
                         {
-                            index12++;
                             item.id = index;
                             item.EndState.CurrentTransitionIndex = index;
                             q.Enqueue(item.EndState);
@@ -299,13 +342,14 @@ namespace ALE2
             string saveLocation = @"C:\Program Files (x86)\Graphviz2.38\bin";
             //code = "graph logic {node [ fontname = \"Arial\" ] " + code + "}";
 
-            string file = Path.Combine(saveLocation, "dotFile.dot");
+            string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dotFile.dot");
             File.WriteAllText(file, code);
 
             ProcessStartInfo processInfo = new ProcessStartInfo();
             processInfo.WorkingDirectory = Path.GetDirectoryName(saveLocation + "\\dot.exe");
             processInfo.FileName = saveLocation + "\\dot.exe";
-            processInfo.Arguments = "-Tpng -oabc.png dotFile.dot";
+            Console.Write(AppDomain.CurrentDomain.BaseDirectory);
+            processInfo.Arguments = "-Tpng -o" + AppDomain.CurrentDomain.BaseDirectory + "abc.png " + file;
             processInfo.ErrorDialog = true;
             processInfo.UseShellExecute = false;
             processInfo.RedirectStandardOutput = true;

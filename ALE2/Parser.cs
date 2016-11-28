@@ -56,7 +56,7 @@ namespace ALE2
 
                     foreach (var item in temp)
                     {
-                        automata.FindState(item).IsFinal = true; ;
+                        automata.FindState(item).IsFinal = true;
                     }
                 }
                 else if (CheckContains(line, "transition"))
@@ -130,6 +130,12 @@ namespace ALE2
             return temp;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="automaton"></param>
+        /// <returns></returns>
         private List<Word> ParseWords(List<string> lines, Automaton automaton)
         {
             List<Word> temp = new List<Word>();
@@ -198,7 +204,9 @@ namespace ALE2
                     words = line.Split(new string[] { "states: " }, StringSplitOptions.None).ToList();
                     words = words.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
                     words = words[0].Split(',').ToList();
+                    words = words.Select(x => x.Trim()).ToList();
                     return words;
+                // return words;
                 case 3://Final
                     words = line.Split(new string[] { "final: " }, StringSplitOptions.None).ToList();
                     words = words.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
@@ -217,31 +225,6 @@ namespace ALE2
             }
 
             return words;
-        }
-
-        /// <summary>
-        /// Creates the picture based on code
-        /// </summary>
-        /// <param name="code"></param>
-        public void CreatePicture(string code)
-        {
-            string saveLocation = @"C:\Program Files (x86)\Graphviz2.38\bin";
-            code = "graph logic {node [ fontname = \"Arial\" ] " + code + "}";
-
-            string file = Path.Combine(saveLocation, "dotFile.dot");
-            File.WriteAllText(file, code);
-
-            ProcessStartInfo processInfo = new ProcessStartInfo();
-            processInfo.WorkingDirectory = Path.GetDirectoryName(saveLocation + "\\dot.exe");
-            processInfo.FileName = saveLocation + "\\dot.exe";
-            processInfo.Arguments = "-Tpng -oabc.png dotFile.dot";
-            processInfo.ErrorDialog = true;
-            processInfo.UseShellExecute = false;
-            processInfo.RedirectStandardOutput = true;
-            processInfo.RedirectStandardError = true;
-
-            Process proc = Process.Start(processInfo);
-            proc.WaitForExit();
         }
 
     }

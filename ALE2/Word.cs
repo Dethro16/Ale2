@@ -10,6 +10,7 @@ namespace ALE2
     {
         string stringValue;
         bool accepted;
+        bool isAccepted;
 
         /// <summary>
         /// String value of the word
@@ -26,10 +27,17 @@ namespace ALE2
             set { accepted = value; }
         }
 
+        public bool IsAccepted
+        {
+            get { return isAccepted; }
+            set { isAccepted = value; }
+        }
+
         public Word(string value, bool accepted)
         {
             StringValue = value;
             Accepted = accepted;
+            IsAccepted = false;
         }
     }
 }
