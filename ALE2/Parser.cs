@@ -227,5 +227,54 @@ namespace ALE2
             return words;
         }
 
+        /// <summary>
+        /// Creates the picture
+        /// </summary>
+        /// <returns></returns>
+        public void GeneratePicture(List<State> StateList, List<Transition> TransitionList)
+        {
+            string code = "digraph myAutomaton {\nrankdir = LR;\n\"" + "\" [shape = none]";
+            int stateCount = 0;
+
+            foreach (State state in StateList)
+            {
+                code += "\n" + state.GraphValue;
+            }
+
+            foreach (Transition transition in TransitionList)
+            {
+                if (stateCount == 0)
+                {
+                    code += "\n" + "\"" + "\"" + " -> " + "\"" + StateList[0].StringValue + "\"";
+                }
+
+                code += "\n" + transition.GraphValue;
+
+
+                stateCount++;
+            }
+
+            code += "\n}";
+
+            string saveLocation = @"C:\Program Files (x86)\Graphviz2.38\bin";
+            //code = "graph logic {node [ fontname = \"Arial\" ] " + code + "}";
+
+            string file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dotFile.dot");
+            File.WriteAllText(file, code);
+
+            ProcessStartInfo processInfo = new ProcessStartInfo();
+            processInfo.WorkingDirectory = Path.GetDirectoryName(saveLocation + "\\dot.exe");
+            processInfo.FileName = saveLocation + "\\dot.exe";
+            Console.Write(AppDomain.CurrentDomain.BaseDirectory);
+            processInfo.Arguments = "-Tpng -o" + AppDomain.CurrentDomain.BaseDirectory + "abc.png " + file;
+            processInfo.ErrorDialog = true;
+            processInfo.UseShellExecute = false;
+            processInfo.RedirectStandardOutput = true;
+            processInfo.RedirectStandardError = true;
+
+            Process proc = Process.Start(processInfo);
+            proc.WaitForExit();
+        }
+
     }
 }

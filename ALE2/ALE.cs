@@ -37,7 +37,7 @@ namespace ALE2
 
             lbDfa.Text = automata.CheckDFA().ToString();
 
-            automata.GeneratePicture();
+            parser.GeneratePicture(automata.StateList, automata.TransitionList);
 
             pictureBox1.ImageLocation = AppDomain.CurrentDomain.BaseDirectory + "abc.png";
         }
@@ -122,12 +122,12 @@ namespace ALE2
             {
                 if (item.Contains('X'))//wrong
                 {
-                    RichTextBoxExtensions.AppendText(rTBTestCase, item, Color.Red, this.Font);
+                    RichTextBoxExtensions.AppendText(rTBTestCase, item, Color.Red);
                     textBox.AppendText("\n");
                 }
                 else if (item.Contains('V'))
                 {
-                    RichTextBoxExtensions.AppendText(rTBTestCase, item, Color.Green, this.Font);
+                    RichTextBoxExtensions.AppendText(rTBTestCase, item, Color.Green);
                     textBox.AppendText("\n");
                 }
             }
@@ -225,13 +225,12 @@ namespace ALE2
 
 public static class RichTextBoxExtensions
 {
-    public static void AppendText(this RichTextBox box, string text, Color color, Font font)
+    public static void AppendText(this RichTextBox box, string text, Color color)
     {
         box.SelectionStart = box.TextLength;
         box.SelectionLength = 0;
 
         box.SelectionColor = color;
-        box.SelectionFont = font;
         box.AppendText(text);
         box.SelectionColor = box.ForeColor;
     }
