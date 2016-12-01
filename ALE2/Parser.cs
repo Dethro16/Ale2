@@ -276,5 +276,354 @@ namespace ALE2
             proc.WaitForExit();
         }
 
+        private void GetSubExpression(Stack<char> input)
+        {
+
+        }
+
+        public void tryingShit(string input, int stateIndex = 0)
+        {
+            Stack<char> temp = new Stack<char>(input.Reverse());
+            int openBracket = 0;
+            while (temp.Count > 0)
+            {
+                char c = temp.Pop();
+
+                if (Char.IsLetter(c))
+                {
+                    State s1 = new State(stateIndex.ToString());
+                    State s2 = new State(stateIndex.ToString());
+                    Transition t1 = new Transition(s1, s2, c);
+                }
+                if (c == '(')
+                {
+                    openBracket += 1;
+                }
+                if (c == ')')
+                {
+                    openBracket -= 1;
+                }
+
+                if (c == '|')
+                {
+
+                }
+                if (c == '.')
+                {
+
+                }
+            }
+
+
+        }
+
+
+        //public void CreateNFA(string input)
+        //{
+        //    Queue<State> q = new Queue<State>();
+        //    Stack<State> st = new Stack<State>();
+
+        //    Queue<Transition> outputQueue = new Queue<Transition>();
+        //    List<State> stateList = new List<State>();
+
+        //    int stateIndex = 0;
+        //    for (int i = 0; i < input.Length; i++)
+        //    {
+        //        char check = input[i];
+        //        if (Char.IsLetter(check))
+        //        {
+        //            State S1 = new State(stateIndex.ToString());
+        //            S1.CurrentTransitionIndex = i;
+        //            stateIndex += 1;
+
+        //            State S2 = new State(stateIndex.ToString());
+        //            S2.CurrentTransitionIndex = i;
+        //            stateIndex += 1;
+
+        //            stateList.Add(S1);
+        //            stateList.Add(S2);
+
+        //            outputQueue.Enqueue(new Transition(S1, S2, check));
+        //        }
+        //        else if (check == '*')//Epsilon transition
+        //        {
+
+        //        }
+        //        else if (check == '|')
+        //        {
+
+        //        }
+        //        else if (check == '.')
+        //        {
+
+        //        }
+        //        else if (check == ',')
+        //        {
+
+        //        }
+        //        else if (check == '(')
+        //        {
+
+        //        }
+        //        else if (check == ')')
+        //        {
+
+        //        }
+        //    }
+        //}
+
+        //public void ParseMe(string input)
+        //{
+        //    List<Automaton> temp = new List<Automaton>();
+
+        //    while (ParseTest(input, temp) != null)
+        //    {
+        //        //temp.Add(ParseTest(input, temp));
+        //    }
+        //}
+        //public List<Automaton> ParseTest(string input, List<Automaton> auto, int i = 0, int stateIndex = 0)
+        //{
+        //    Automaton temp = new Automaton(new List<State>(), new List<string>(), new List<Transition>());
+
+        //    for (; i < input.Length; i++)
+        //    {
+        //        char c = input[i];
+
+        //        if (c == '(')
+        //        {
+
+        //        }
+        //        if (c == '.')
+        //        {
+        //            auto = ParseTest(input, auto, i+1);
+        //        }
+        //        if (Char.IsLetter(c))
+        //        {
+        //            State S1 = new State(stateIndex.ToString());
+        //            stateIndex += 1;
+        //            State S2 = new State(stateIndex.ToString());
+        //            stateIndex += 1;
+
+        //            temp.StateList.Add(S1);
+        //            temp.StateList.Add(S2);
+
+        //            Transition T1 = new Transition(S1, S2, c);
+        //            temp.TransitionList.Add(T1);
+        //            auto.Add(temp);
+
+        //            auto.AddRange(ParseTest(input, auto, i+1, stateIndex));
+        //        }
+        //    }
+
+        //    return auto;
+
+        //}
+
+
+
+
+        //private State CreateState(char c, int index)
+        //{
+        //    if (Char.IsLetter(c))
+        //    {
+        //        //return new Transition(null, null, c);
+        //    }
+
+        //    switch (c)
+        //    {
+        //        case '_':
+        //            break;
+        //        case '|':
+        //            break;
+        //        case '*':
+        //            break;
+        //        case '.':
+        //            break;
+        //        default:
+        //            break;
+        //    }
+        //}
+
+        //public Automaton TreeToNDFA()
+        //{
+
+        //    return null;
+        //}
+
+        //public void KleeneState()
+        //{
+
+        //}
+
+        //public void ParseRegExToNode(string input)
+        //{
+        //    Tokenizer t = new Tokenizer();
+        //    List<Token> tokenList = t.Scan(input);
+        //    ToNode(tokenList);
+        //    //InfixToPrefix(tokenList);
+        //}
+
+        //public void InfixToPrefix(List<Token> input)
+        //{
+        //    Stack<Token> tokenStack = new Stack<Token>();
+        //    List<Token> end = new List<Token>();
+        //    int index = 0;
+        //    while (input.Count > 0)
+        //    {
+        //        Token check = input[index];
+        //        if (check is VariableToken)
+        //        {
+        //            tokenStack.Push(check);
+        //        }
+        //        if (check is OpenParenthesis)
+        //        {
+        //            tokenStack.Push(check);
+        //        }
+        //        if (check is Operand)
+        //        {
+        //            while (tokenStack.Count > 0)
+        //            {
+        //                end.Add(tokenStack.Pop());
+        //            }
+        //        }
+        //        else if (check is ClosedParenthesis)
+        //        {
+        //            while (tokenStack.Last().GetType() != typeof(OpenParenthesis))
+        //            {
+        //                end.Add(tokenStack.Pop());
+        //            }
+        //        }
+        //        index += 1;
+        //    }
+        //}
+
+        //private List<State> OrNode(int stateIndex)
+        //{
+        //    return null;
+        //}
+        //private Token GetNextGood(Stack<Token> stt)
+        //{
+        //    while (stt.Count > 0)
+        //    {
+        //        Token st = stt.Pop();
+
+        //        if (st is VariableToken)
+        //        {
+
+        //        }
+        //    }
+        //}
+        //private void ToNode(List<Token> tokenList)
+        //{
+        //    tokenList.Reverse();
+        //    Stack<Token> stt = new Stack<Token>(tokenList);
+        //    List<State> stateList = new List<State>();
+        //    List<Transition> transitionList = new List<Transition>();
+        //    int stateIndex = 0;
+        //    int i = 0;
+        //    while (tokenList.Count > 0)
+        //    {
+        //        Token t = stt.Pop();
+        //        if (t is VariableToken)
+        //        {
+        //            State S1 = new State(stateIndex.ToString());
+        //            S1.CurrentTransitionIndex = i;
+        //            stateIndex += 1;
+
+        //            State S2 = new State(stateIndex.ToString());
+        //            S2.CurrentTransitionIndex = i;
+        //            stateIndex += 1;
+
+        //            Transition trans = new Transition(S1, S2, t.ToString().ToCharArray()[0]);
+        //            S1.OutTrans.Add(trans);
+        //            S2.InTrans.Add(trans);
+        //            stateList.Add(S1);
+        //            stateList.Add(S2);
+        //            transitionList.Add(trans);
+
+        //        }
+        //        else if (t is RepetitionToken)
+        //        {
+
+        //        }
+        //        else if (t is AndToken)
+        //        {
+
+        //        }
+
+        //        else if (t is OrToken)
+        //        {
+        //            stateList.AddRange(OrNode(stateIndex));
+        //        }
+        //        else if (t is EpsilonToken)
+        //        {
+
+        //        }
+        //        i += 1;
+        //    }
+        //}
+
+        //public void ParseRegularExpression(string input)
+        //{
+        //    //Shunting yard algorithm to produce AST
+        //    Queue<State> q = new Queue<State>();
+        //    Stack<State> st = new Stack<State>();
+
+        //    Queue<Transition> outputQueue = new Queue<Transition>();
+        //    // q.Enqueue(CreateState(input[0], 0));
+        //    int stateIndex = 0;
+        //    for (int i = 0; i < input.Length; i++)
+        //    {
+        //        char check = input[i];
+        //        if (Char.IsLetter(check))
+        //        {
+        //            State S1 = new State(stateIndex.ToString());
+        //            S1.CurrentTransitionIndex = i;
+        //            stateIndex += 1;
+
+        //            State S2 = new State(stateIndex.ToString());
+        //            S2.CurrentTransitionIndex = i;
+        //            stateIndex += 1;
+
+        //            outputQueue.Enqueue(new Transition(S1, S2, check));
+        //        }
+        //        else if (check == '*')//Epsilon transition
+        //        {
+
+        //        }
+        //        else if (check == '|')
+        //        {
+
+        //        }
+        //        else if (check == '.')
+        //        {
+
+        //        }
+        //        else if (check == ',')
+        //        {
+
+        //        }
+        //        else if (check == '(')
+        //        {
+
+        //        }
+        //        else if (check == ')')
+        //        {
+
+        //        }
+        //    }
+        //    //Check first token
+        //    //If token is letter push it to the outputQueue
+        //    //if token is function token push on stack
+        //    //if token is , 
+        //    //until the token at the top of the stack is a left parenthesis pop operators off the stack onto the output queue
+        //    //if token is operator  while there is an operator token 
+
+        //    while (q.Count > 0)
+        //    {
+
+        //    }
+        //}
+
     }
 }

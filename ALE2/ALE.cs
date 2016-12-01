@@ -220,6 +220,18 @@ namespace ALE2
                 lbAccepted.BackColor = Color.Red;
             }
         }
+
+        private void btnCreateNDFA_Click(object sender, EventArgs e)
+        {
+            if (tBRE.Text == "")
+            {
+                MessageBox.Show("Please provide a regular expression.");
+                return;
+            }
+
+            //parser.ParseRegExToNode(tBRE.Text);
+            //parser.ParseTest(tBRE.Text, new List<Automaton>());
+        }
     }
 }
 

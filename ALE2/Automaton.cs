@@ -10,6 +10,7 @@ namespace ALE2
 {
     class Automaton
     {
+        State startState;
         List<State> stateList;
         List<string> alphabet;
         List<Transition> transitionList;
@@ -25,6 +26,15 @@ namespace ALE2
         {
             get { return dfa; }
             set { dfa = value; }
+        }
+
+        /// <summary>
+        /// Contains all states
+        /// </summary>
+        public State StartState
+        {
+            get { return startState; }
+            set { startState = value; }
         }
 
         /// <summary>
