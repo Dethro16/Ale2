@@ -10,10 +10,25 @@ namespace ALE2
     {
         string stringValue;
         bool isFinal = false;
+        bool isStart = false;
         List<Transition> inTrans = new List<Transition>();
         List<Transition> outTrans = new List<Transition>();
         int currentTransIndex;
         string graphValue;
+        int id;
+        int transIndex = 0;
+
+        public int Id
+        {
+            get { return id; }
+            set { id = value; }
+        }
+
+        public int TransIndex
+        {
+            get { return transIndex; }
+            set { transIndex = value; }
+        }
 
         /// <summary>
         /// String value of the state, A, B, ect
@@ -32,6 +47,13 @@ namespace ALE2
             get { return isFinal; }
             set { isFinal = value; }
         }
+
+        public bool IsStart
+        {
+            get { return isStart; }
+            set { isStart = value; }
+        }
+
 
         /// <summary>
         /// Current Transition index
@@ -71,9 +93,10 @@ namespace ALE2
         }
 
 
-        public State(string stringValue)
+        public State(string stringValue, int id = 0)
         {
             StringValue = stringValue;
+            Id = id;
         }
 
 

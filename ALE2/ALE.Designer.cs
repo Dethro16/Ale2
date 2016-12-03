@@ -234,7 +234,7 @@
             // 
             this.pictureBox2.Location = new System.Drawing.Point(685, 105);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(487, 612);
+            this.pictureBox2.Size = new System.Drawing.Size(653, 612);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 21;
             this.pictureBox2.TabStop = false;
@@ -245,7 +245,7 @@
             this.tBRE.Name = "tBRE";
             this.tBRE.Size = new System.Drawing.Size(199, 20);
             this.tBRE.TabIndex = 28;
-            this.tBRE.Text = "a|b";
+            this.tBRE.Text = "|(a,|(b,|(c,d)))";
             // 
             // label11
             // 

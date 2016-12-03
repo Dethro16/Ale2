@@ -14,10 +14,13 @@ namespace ALE2
         List<State> stateList;
         List<string> alphabet;
         List<Transition> transitionList;
+        public List<State> ConnectingStates = new List<State>();
 
         bool dfa;
         bool finite;
         List<Word> words = new List<Word>();
+
+        public List<State> currentStates = new List<State>();
 
         /// <summary>
         /// Contains all states
@@ -126,6 +129,21 @@ namespace ALE2
             return temp;
         }
 
+        public List<State> GetStartStates()
+        {
+            List<State> temp = new List<State>();
+
+            foreach (State item in StateList)
+            {
+                if (item.IsStart)
+                {
+                    temp.Add(item);
+                }
+            }
+
+            return temp;
+        }
+
         /// <summary>
         /// Assigns all transitions to their states
         /// </summary>
@@ -147,6 +165,11 @@ namespace ALE2
                 }
 
             }
+        }
+
+        public void CheckForEmptyFinal()
+        {
+
         }
 
         /// <summary>
@@ -171,6 +194,64 @@ namespace ALE2
                 transition.GraphValue = "\"" + transition.InitialState.StringValue + "\"" + " -> " + "\"" + transition.EndState.StringValue + "\"" + "[label=\"" + transition.TransitionChar + "\"]";
             }
 
+        }
+
+        public int GetLastStateId()
+        {
+            try
+            {
+                var item = StateList.Max(x => x.Id);
+                return item;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+            //return -1;
+
+        }
+
+        public State GetStateByParam(int transitionIndex, bool isStartFinal)
+        {
+            List<State> tempStates = ConnectingStates.Where(p => p.TransIndex == transitionIndex).ToList();
+
+            //tempStates = tempStates.Where(p => tempStates.Any(l => p.TransIndex == transitionIndex)).ToList();
+
+            //tempStates = tempStates.Where(e => transitionIndex);
+
+            foreach (State state in tempStates)
+            {
+                if (state.TransIndex == transitionIndex)
+                {
+                    if (!isStartFinal && state.IsStart == isStartFinal)
+                    {
+                        State tempe = StateList.Find(x => x == state);
+                        tempe.IsFinal = false;
+                        return state;
+                    }
+
+                    else if (isStartFinal && state.IsStart == isStartFinal)
+                    {
+                        State tempe = StateList.Find(x => x == state);
+                        tempe.IsStart = false;
+                        return state;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public State GetFinalStateByIndex(int i)
+        {
+            switch (i)
+            {
+                case 0:
+                case 1:
+                case 2:
+                default:
+                    break;
+            }
+            return null;
         }
 
         /// <summary>
@@ -216,21 +297,13 @@ namespace ALE2
             }
         }
 
-        public void ClearAllStates()
-        {
-            foreach (var state in StateList)
-            {
-                state.CurrentTransitionIndex = 0;
-            }
-        }
-
         public List<string> CheckTestWords()
         {
             List<string> checkedWords = new List<string>();
             for (int i = 0; i < Words.Count; i++)
             {
                 bool temp = BFSTraversal(StateList[0], Words[i].StringValue);
-                ClearAllStates();
+                ClearStates();
                 if (Words[i].Accepted == temp)
                 {
                     checkedWords.Add("Word-" + i + ": " + Words[i].StringValue + " " + Words[i].Accepted + ": V");

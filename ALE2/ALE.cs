@@ -228,7 +228,17 @@ namespace ALE2
                 MessageBox.Show("Please provide a regular expression.");
                 return;
             }
+            
+            Automaton automaton = new Automaton(new List<State>(), new List<string>(), new List<Transition>());
 
+            parser.ParseRE(automaton, tBRE.Text);
+            automaton.AssignTransitions();
+            automaton.AssignGraphViz();
+
+
+            parser.GeneratePicture(automaton.StateList, automaton.TransitionList);
+
+            pictureBox2.ImageLocation = AppDomain.CurrentDomain.BaseDirectory + "abc.png";
             //parser.ParseRegExToNode(tBRE.Text);
             //parser.ParseTest(tBRE.Text, new List<Automaton>());
         }
