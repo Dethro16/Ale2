@@ -292,6 +292,7 @@ namespace ALE2
             State s1 = automaton.GetStateByParam(transIndex, false); //gets null here need to check that out because transindex aka transition is 2 instead of 1 but those should be two in the fgirst place
             State s2 = automaton.GetStateByParam(transIndex, true);
 
+            s1.IsFinal = false;
             Transition trans = new Transition(s1, s2, c);
 
             trans.InitialState.OutTrans.Add(trans);
@@ -383,12 +384,12 @@ namespace ALE2
                 }
 
                 automaton.StateList.AddRange(tempStateList);
+                automaton.ConnectingStates[0].IsFinal = false;
                 automaton.TransitionList.Add(new Transition(automaton.ConnectingStates[0], tempStateList[0], '_'));
                 automaton.ConnectingStates.Add(tempStateList[0]);
 
                 automaton.TransitionList.Add(new Transition(automaton.ConnectingStates[0], tempStateList[1], '_'));
                 automaton.ConnectingStates.Add(tempStateList[1]);
-
 
                 automaton.TransitionList.Add(new Transition(tempStateList[2], automaton.ConnectingStates[1], '_'));
                 automaton.ConnectingStates.Add(tempStateList[2]);
