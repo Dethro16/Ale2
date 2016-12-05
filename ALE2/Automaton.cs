@@ -218,26 +218,43 @@ namespace ALE2
             //tempStates = tempStates.Where(p => tempStates.Any(l => p.TransIndex == transitionIndex)).ToList();
 
             //tempStates = tempStates.Where(e => transitionIndex);
-
             foreach (State state in tempStates)
             {
-                if (state.TransIndex == transitionIndex)
+                if (isStartFinal)
                 {
-                    if (!isStartFinal && state.IsStart == isStartFinal)
+                    if (state.IsStart)
                     {
-                        State tempe = StateList.Find(x => x == state);
-                        tempe.IsFinal = false;
                         return state;
                     }
-
-                    else if (isStartFinal && state.IsStart == isStartFinal)
+                }
+                else if (!isStartFinal)
+                {
+                    if (state.IsFinal)
                     {
-                        State tempe = StateList.Find(x => x == state);
-                        tempe.IsStart = false;
                         return state;
                     }
                 }
             }
+
+            //foreach (State state in tempStates)
+            //{
+            //    if (state.TransIndex == transitionIndex)
+            //    {
+            //        if (!isStartFinal && state.IsStart == isStartFinal)
+            //        {
+            //            State tempe = StateList.Find(x => x == state);
+            //            tempe.IsFinal = false;
+            //            return state;
+            //        }
+
+            //        else if (isStartFinal && state.IsStart == isStartFinal)
+            //        {
+            //            State tempe = StateList.Find(x => x == state);
+            //            tempe.IsStart = false;
+            //            return state;
+            //        }
+            //    }
+            //}
             return null;
         }
 

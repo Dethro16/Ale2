@@ -99,8 +99,8 @@ namespace ALE2
                 count++;
             }
 
-            //automata.AssignTransitions();
-            //automata.AssignGraphViz();
+            automata.AssignTransitions();
+            automata.AssignGraphViz();
 
             return automata;
         }
@@ -305,7 +305,7 @@ namespace ALE2
 
             return automaton;
         }
-        private Automaton ParseOr(Automaton automaton, int stateIndex, int transIndex)
+        private Automaton ParseOr(Automaton automaton, int stateIndex, int transIndex, bool leftRight = false)
         {
             List<State> tempStateList = new List<State>();
 
@@ -358,6 +358,7 @@ namespace ALE2
             }
             else
             {
+
                 for (int i = stateIndex + 1; i < stateIndex + 5; i++)
                 {
                     State tempState = new State(i.ToString(), i);
@@ -391,19 +392,47 @@ namespace ALE2
                 automaton.TransitionList.Add(new Transition(automaton.ConnectingStates[0], tempStateList[1], '_'));
                 automaton.ConnectingStates.Add(tempStateList[1]);
 
-                automaton.TransitionList.Add(new Transition(tempStateList[2], automaton.ConnectingStates[1], '_'));
-                automaton.ConnectingStates.Add(tempStateList[2]);
+                if (leftRight)
+                {
+                    State s1 = automaton.GetStateByParam(transIndex, false); //gets null here need to check that out because transindex aka transition is 2 instead of 1 but those should be two in the fgirst place
+                    State s2 = automaton.GetStateByParam(transIndex, true);
 
-                automaton.TransitionList.Add(new Transition(tempStateList[3], automaton.ConnectingStates[1], '_'));
-                automaton.ConnectingStates.Add(tempStateList[3]);
+                    //automaton.TransitionList.Add(GetTransition(tempStateList[2], automaton.ConnectingStates[2], '_'));
+                    automaton.TransitionList.Add(new Transition(automaton.ConnectingStates[2], tempStateList[2], '_'));//WRONG HERE
+                    automaton.ConnectingStates.Add(tempStateList[2]);
 
-                automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
-                automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
+                    //automaton.TransitionList.Add(GetTransition(tempStateList[3], automaton.ConnectingStates[3], '_'));
+                    automaton.TransitionList.Add(new Transition(automaton.ConnectingStates[3], tempStateList[3], '_'));
+                    automaton.ConnectingStates.Add(tempStateList[3]);
+
+                    automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
+                    automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
+                }
+                else
+                {
+                    //automaton.TransitionList.Add(GetTransition(tempStateList[2], automaton.ConnectingStates[2], '_'));
+                    automaton.TransitionList.Add(new Transition(tempStateList[2], automaton.ConnectingStates[2], '_'));
+                    automaton.ConnectingStates.Add(tempStateList[2]);
+
+                    //automaton.TransitionList.Add(GetTransition(tempStateList[3], automaton.ConnectingStates[3], '_'));
+                    automaton.TransitionList.Add(new Transition(tempStateList[3], automaton.ConnectingStates[2], '_'));
+                    automaton.ConnectingStates.Add(tempStateList[3]);
+
+                    automaton.ConnectingStates.Remove(automaton.ConnectingStates[2]);
+                    automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
+                }
+
+
+
             }
 
             return automaton;
         }
 
+        private Transition GetTransition(State s1, State s2, char c)
+        {
+            return null;
+        }
         private string GetString(string expression, int index)
         {
             var aStringBuilder = new StringBuilder(expression);
@@ -437,6 +466,42 @@ namespace ALE2
             }
 
             return output;
+        }
+
+        public Automaton TestParseRE(Automaton automaton, string expression, int transitionIndex = 0, int expressionIndex = 0)
+        {
+            bool leftRight = false;//0left 1 right
+            for (int i = expressionIndex; i < expression.Length; i++)
+            {
+                char c = expression[i];
+                if (Char.IsLetter(c))
+                {
+                    automaton = ParseLetter(automaton, c, automaton.GetLastStateId(), transitionIndex);
+                    leftRight = !leftRight;
+
+                }
+                else if (c == '|')//OR
+                {
+                    int lastStateId = automaton.GetLastStateId();
+                    automaton = ParseOr(automaton, lastStateId, transitionIndex, leftRight);
+                    leftRight = !leftRight;
+                }
+                else if (c == '(')
+                {
+                    transitionIndex += 1;
+                    leftRight = false;
+                }
+                else if (c == ')')
+                {
+                    transitionIndex -= 1;
+                }
+                else if (c == ',')
+                {
+                    leftRight = true;
+                }
+            }
+
+            return automaton;
         }
 
         public Automaton ParseRE(Automaton automaton, string expression, int inputIndex = 0, int transition = 0)

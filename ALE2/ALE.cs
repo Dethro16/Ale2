@@ -231,7 +231,7 @@ namespace ALE2
             
             Automaton automaton = new Automaton(new List<State>(), new List<string>(), new List<Transition>());
 
-            parser.ParseRE(automaton, tBRE.Text);
+            parser.TestParseRE(automaton, tBRE.Text);
             automaton.AssignTransitions();
             automaton.AssignGraphViz();
 
@@ -239,8 +239,6 @@ namespace ALE2
             parser.GeneratePicture(automaton.StateList, automaton.TransitionList);
 
             pictureBox2.ImageLocation = AppDomain.CurrentDomain.BaseDirectory + "abc.png";
-            //parser.ParseRegExToNode(tBRE.Text);
-            //parser.ParseTest(tBRE.Text, new List<Automaton>());
         }
     }
 }
