@@ -29,13 +29,19 @@ namespace ALE2
                 return;
             }
             automata = parser.ParseFiniteAutomata(cBDirectory.Text + "\\" + cBFiles.Text);
+            automata.AssignTransitions();
+            automata.AssignGraphViz();
+
             rTBTestCase.Clear();
+
             AppendToRTB(rTBTestCase, new List<string>() { automata.CheckTestDFA() });
             AppendToRTB(rTBTestCase, automata.CheckTestWords());
             automata.CheckTestWords();
 
 
             lbDfa.Text = automata.CheckDFA().ToString();
+
+            
 
             parser.GeneratePicture(automata.StateList, automata.TransitionList);
 
