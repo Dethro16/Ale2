@@ -34,12 +34,12 @@ namespace ALE2
 
             rTBTestCase.Clear();
 
-            AppendToRTB(rTBTestCase, new List<string>() { automata.CheckTestDFA() });
-            AppendToRTB(rTBTestCase, automata.CheckTestWords());
-            automata.CheckTestWords();
+            //AppendToRTB(rTBTestCase, new List<string>() { automata.CheckTestDFA() });
+            //AppendToRTB(rTBTestCase, automata.CheckTestWords());
+            //automata.CheckTestWords();
 
 
-            lbDfa.Text = automata.CheckDFA().ToString();
+            //lbDfa.Text = automata.CheckDFA().ToString();
 
             
 

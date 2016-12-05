@@ -116,6 +116,10 @@ namespace ALE2
             List<Transition> temp = new List<Transition>();
             foreach (var item in lines)
             {
+                if (item == "")
+                {
+                    continue;
+                }
                 if (item == "end.")
                 {
                     break;
@@ -262,9 +266,9 @@ namespace ALE2
             File.WriteAllText(file, code);
 
             ProcessStartInfo processInfo = new ProcessStartInfo();
-            processInfo.WorkingDirectory = Path.GetDirectoryName(saveLocation + "\\dot.exe");
+            processInfo.WorkingDirectory = Path.GetDirectoryName(saveLocation);
             processInfo.FileName = saveLocation + "\\dot.exe";
-            Console.Write(AppDomain.CurrentDomain.BaseDirectory);
+           // Console.Write(AppDomain.CurrentDomain.BaseDirectory);
             processInfo.Arguments = "-Tpng -o" + AppDomain.CurrentDomain.BaseDirectory + "abc.png " + file;
             processInfo.ErrorDialog = true;
             processInfo.UseShellExecute = false;
@@ -291,6 +295,10 @@ namespace ALE2
 
             State s1 = automaton.GetStateByParam(transIndex, false); //gets null here need to check that out because transindex aka transition is 2 instead of 1 but those should be two in the fgirst place
             State s2 = automaton.GetStateByParam(transIndex, true);
+            if (s1 == null || s2 == null)
+            {
+                return automaton;
+            }
 
             s1.IsFinal = false;
             Transition trans = new Transition(s1, s2, c);
@@ -305,7 +313,7 @@ namespace ALE2
 
             return automaton;
         }
-        private Automaton ParseOr(Automaton automaton, int stateIndex, int transIndex)
+        private Automaton ParseOr(Automaton automaton, int stateIndex, int transIndex, bool leftRight)
         {
             List<State> tempStateList = new List<State>();
 
@@ -383,22 +391,48 @@ namespace ALE2
                     return automaton;
                 }
 
+                int xyz = 0;
+
+                if (leftRight)
+                {
+                    xyz = 1;
+                }
+                else
+                {
+                    xyz = 2;
+                }
+
                 automaton.StateList.AddRange(tempStateList);
                 automaton.ConnectingStates[0].IsFinal = false;
                 automaton.TransitionList.Add(new Transition(automaton.ConnectingStates[0], tempStateList[0], '_'));
-                automaton.ConnectingStates.Add(tempStateList[0]);
+                //automaton.ConnectingStates.Add(tempStateList[0]);
 
                 automaton.TransitionList.Add(new Transition(automaton.ConnectingStates[0], tempStateList[1], '_'));
-                automaton.ConnectingStates.Add(tempStateList[1]);
+                //automaton.ConnectingStates.Add(tempStateList[1]);
 
-                automaton.TransitionList.Add(new Transition(tempStateList[2], automaton.ConnectingStates[1], '_'));
-                automaton.ConnectingStates.Add(tempStateList[2]);
 
-                automaton.TransitionList.Add(new Transition(tempStateList[3], automaton.ConnectingStates[1], '_'));
-                automaton.ConnectingStates.Add(tempStateList[3]);
 
-                automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
-                automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
+                automaton.TransitionList.Add(new Transition(tempStateList[2], automaton.ConnectingStates[xyz], '_'));
+                // automaton.ConnectingStates.Add(tempStateList[2]);
+
+                automaton.TransitionList.Add(new Transition(tempStateList[3], automaton.ConnectingStates[xyz], '_'));
+                //automaton.ConnectingStates.Add(tempStateList[3]);
+
+                if (leftRight)
+                {
+                    automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
+                    automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
+                }
+                else
+                {
+                    automaton.ConnectingStates.Remove(automaton.ConnectingStates[2]);
+                    automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
+                }
+
+                automaton.ConnectingStates.AddRange(tempStateList);
+
+
+
             }
 
             return automaton;
@@ -439,7 +473,7 @@ namespace ALE2
             return output;
         }
 
-        public Automaton ParseRE(Automaton automaton, string expression, int inputIndex = 0, int transition = 0)
+        public Automaton ParseRE(Automaton automaton, string expression, int inputIndex = 0, int transition = 0, bool leftRight = false)
         {
 
             for (; inputIndex < expression.Length; inputIndex++)
@@ -459,6 +493,7 @@ namespace ALE2
 
                 if (c == '(')
                 {
+                    leftRight = false;
                     string tempExpression = GetString(expression, inputIndex);
                     int bracketId = GetMatchingBracket(tempExpression);
                     string tempSubExpression;
@@ -489,6 +524,8 @@ namespace ALE2
                 }
                 else if (c == ')')
                 {
+                    //leftRight = false;
+                    transition -= 1;
                     //return automaton;
                 }
                 else if (c == '&')
@@ -497,13 +534,15 @@ namespace ALE2
                 }
                 else if (c == '|')
                 {
+                    //leftRight = !leftRight;
                     int lastStateId = automaton.GetLastStateId();
-                    automaton = ParseOr(automaton, lastStateId, transition);
+                    automaton = ParseOr(automaton, lastStateId, transition, leftRight);
 
                     transition += 1;
                 }
                 else if (c == ',')
                 {
+                    leftRight = true;
                     continue;
                 }
                 else
