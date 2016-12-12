@@ -52,13 +52,15 @@ namespace ALE2
                 else if (CheckContains(line, "final"))
                 {
                     List<string> temp = StripValues(line, 3)[0].Split(',').ToList();
+                    
 
                     foreach (var item in temp)
                     {
+                       // item = item.TrimEnd();
                         automata.FindState(item).IsFinal = true;
                     }
                 }
-                else if (CheckContains(line, "transition"))
+                else if (CheckContains(line, "transition") && !CheckContains(line, "#"))
                 {
                     List<string> temp = lines.Skip(count + 1).ToList();
                     automata.TransitionList = ParseTransitions(temp, automata);
@@ -213,7 +215,12 @@ namespace ALE2
                 case 3://Final
                     words = line.Split(new string[] { "final: " }, StringSplitOptions.None).ToList();
                     words = words.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
-                    return words;
+                    List<string> temp = new List<string>();
+                    foreach (var item in words)
+                    {
+                        temp.Add(item.TrimEnd());
+                    }
+                    return temp;
                 case 4://Transition
                     words.Add(line.Replace("-->", ","));
                     words = words[0].Split(',').ToList();
@@ -222,6 +229,7 @@ namespace ALE2
                     return words;
                 case 5:
                     words = line.Split(':').ToList();
+
                     return words;
                 default:
                     break;

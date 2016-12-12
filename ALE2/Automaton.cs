@@ -355,32 +355,59 @@ namespace ALE2
                 {
                     foreach (Transition item in state.OutTrans)
                     {
-                        if (state.CurrentTransitionIndex != input.Length && (item.CanTravel(input[index])))
+
+                        if (item.TransitionChar == '_' && item.InitialState == item.EndState)
                         {
-                            item.id = index;
-                            if (item.TransitionChar == '_')
+
+                        }
+                        else
+                        {
+
+                            if (state.CurrentTransitionIndex != input.Length && (item.CanTravel(input[index])))
                             {
-                                item.EndState.CurrentTransitionIndex = index;
+                                item.id = index;
+                                if (item.TransitionChar == '_')
+                                {
+                                    item.EndState.CurrentTransitionIndex = index;
+                                    q.Enqueue(item.EndState);
+                                }
+                                else
+                                {
+                                    State tempState = new State(item.EndState.StringValue, item.EndState.Id);
+                                    tempState.OutTrans = item.EndState.OutTrans;
+                                    tempState.InTrans = item.EndState.InTrans;
+                                    tempState.IsFinal = item.EndState.IsFinal;
+                                    tempState.IsStart = item.EndState.IsStart;
+                                    tempState.CurrentTransitionIndex = index + 1;
+                                    q.Enqueue(tempState);
+                                    //item.EndState.CurrentTransitionIndex = index + 1;
+                                }
+                                //q.Enqueue(item.EndState);
                             }
-                            else
+                            else if (item.TransitionChar == '_')
                             {
-                                item.EndState.CurrentTransitionIndex = index + 1;
+                                item.id = index;
+
+                                State tempState = new State(item.EndState.StringValue, item.EndState.Id);
+                                tempState.OutTrans = item.EndState.OutTrans;
+                                tempState.InTrans = item.EndState.InTrans;
+                                tempState.IsFinal = item.EndState.IsFinal;
+                                tempState.IsStart = item.EndState.IsStart;
+                                tempState.CurrentTransitionIndex = index;
+
+                               // item.EndState.CurrentTransitionIndex = index;
+                                q.Enqueue(tempState);
                             }
-                            q.Enqueue(item.EndState);
-                        }
-                        else if (item.TransitionChar == '_')
-                        {
-                            item.id = index;
-                            item.EndState.CurrentTransitionIndex = index;
-                            q.Enqueue(item.EndState);
-                        }
-                        if (input == "_" && state.IsFinal)
-                        {
-                            return true;
-                        }
-                        if (state.IsFinal && state.CurrentTransitionIndex == input.Length)
-                        {
-                            return true;
+                            if (input == "_" && state.IsFinal)
+                            {
+                                return true;
+                            }
+                            if (state.IsFinal && state.CurrentTransitionIndex == input.Length)
+                            {
+                                return true;
+                            }
+
+
                         }
                     }
                 }

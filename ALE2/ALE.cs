@@ -41,7 +41,7 @@ namespace ALE2
 
             //lbDfa.Text = automata.CheckDFA().ToString();
 
-            
+
 
             parser.GeneratePicture(automata.StateList, automata.TransitionList);
 
