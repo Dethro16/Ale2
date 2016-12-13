@@ -200,6 +200,7 @@ namespace ALE2
         private void btnParseString_Click(object sender, EventArgs e)
         {
             automata.ClearStates();
+            automata.ClearTransitions();
             lbAccepted.Text = automata.BFSTraversal(automata.StateList[0], tBString.Text).ToString();
         }
 

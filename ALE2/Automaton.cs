@@ -297,6 +297,14 @@ namespace ALE2
             }
         }
 
+        public void ClearTransitions()
+        {
+            foreach (Transition trans in TransitionList)
+            {
+                trans.HasTravelled = false;
+            }
+        }
+
         public List<string> CheckTestWords()
         {
             List<string> checkedWords = new List<string>();
@@ -313,6 +321,7 @@ namespace ALE2
                     checkedWords.Add("Word-" + i + ": " + Words[i].StringValue + " " + Words[i].Accepted + ": X");
                 }
                 Words[i].IsAccepted = temp;
+                ClearTransitions();
             }
 
             return checkedWords;
@@ -379,6 +388,7 @@ namespace ALE2
                                     tempState.InTrans = item.EndState.InTrans;
                                     tempState.IsFinal = item.EndState.IsFinal;
                                     tempState.IsStart = item.EndState.IsStart;
+                                    item.HasTravelled = true;
                                     tempState.CurrentTransitionIndex = index + 1;
                                     q.Enqueue(tempState);
                                     //item.EndState.CurrentTransitionIndex = index + 1;
@@ -396,6 +406,7 @@ namespace ALE2
                                 tempState.IsStart = item.EndState.IsStart;
                                 tempState.CurrentTransitionIndex = index;
 
+                                item.HasTravelled = true;
                                // item.EndState.CurrentTransitionIndex = index;
                                 q.Enqueue(tempState);
                             }
@@ -411,6 +422,17 @@ namespace ALE2
 
                         }
                     }
+
+                    //end of loop
+                    state.HasTravelled += 1;
+                    if (state.HasTravelled == 1)
+                    {
+                        foreach (Transition trans in state.OutTrans)
+                        {
+                            trans.HasTravelled = false;
+                        }
+                    }
+
                 }
                 else if (state.IsFinal && index == input.Length)
                 {

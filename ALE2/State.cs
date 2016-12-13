@@ -17,7 +17,7 @@ namespace ALE2
         string graphValue;
         int id;
         int transIndex = 0;
-
+        int hasTravelled = 0;
         public int Id
         {
             get { return id; }
@@ -54,6 +54,11 @@ namespace ALE2
             set { isStart = value; }
         }
 
+        public int HasTravelled
+        {
+            get { return hasTravelled; }
+            set { hasTravelled = value; }
+        }
 
         /// <summary>
         /// Current Transition index
