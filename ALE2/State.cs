@@ -18,6 +18,8 @@ namespace ALE2
         int id;
         int transIndex = 0;
 
+        bool connectToAnd = false;
+
         public int Id
         {
             get { return id; }
@@ -54,6 +56,12 @@ namespace ALE2
             set { isStart = value; }
         }
 
+
+        public bool ConnectToAnd
+        {
+            get { return connectToAnd; }
+            set { connectToAnd = value; }
+        }
 
         /// <summary>
         /// Current Transition index

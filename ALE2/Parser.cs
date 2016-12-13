@@ -301,8 +301,8 @@ namespace ALE2
             }
             automaton.Alphabet.Add(c.ToString());
 
-            State s1 = automaton.GetStateByParam(transIndex, false); //gets null here need to check that out because transindex aka transition is 2 instead of 1 but those should be two in the fgirst place
-            State s2 = automaton.GetStateByParam(transIndex, true);
+            State s1 = automaton.GetStateByParam(transIndex, true); //gets null here need to check that out because transindex aka transition is 2 instead of 1 but those should be two in the fgirst place
+            State s2 = automaton.GetStateByParam(transIndex, false);
             if (s1 == null || s2 == null)
             {
                 return automaton;
@@ -314,8 +314,14 @@ namespace ALE2
             trans.InitialState.OutTrans.Add(trans);
             trans.EndState.InTrans.Add(trans);
 
-            automaton.ConnectingStates.Remove(s1);
-            automaton.ConnectingStates.Remove(s2);
+            if (!s1.ConnectToAnd)
+            {
+                automaton.ConnectingStates.Remove(s1);
+            }
+            if (!s2.ConnectToAnd)
+            {
+                automaton.ConnectingStates.Remove(s2);
+            }
 
             automaton.TransitionList.Add(trans);
 
@@ -454,6 +460,55 @@ namespace ALE2
             return expression;
         }
 
+        private Automaton ParseAND(Automaton automaton, string expression, int transIndex, bool leftRight)
+        {
+            int stateIndex = automaton.GetLastStateId();
+            List<State> tempStateList = new List<State>();
+
+
+            for (int i = stateIndex + 1; i < stateIndex + 4; i++)
+            {
+                State tempState = new State(i.ToString(), i);
+                tempStateList.Add(tempState);
+
+                if (tempStateList.Count == 1 || tempStateList.Count == 2)
+                {
+                    tempState.IsStart = true;
+
+                    if (tempStateList.Count == 2)
+                    {
+                        tempState.IsFinal = true;
+                        //tempState.ConnectToAnd = false;
+                    }
+                }
+                else
+                {
+                    tempState.IsFinal = true;
+                    tempState.ConnectToAnd = true;
+                }
+                tempState.ConnectToAnd = true;
+                tempStateList.Last().TransIndex = transIndex + 1;
+            }
+
+            //State newState = new State(automaton.GetLastStateId().ToString());
+            //State newState1 = new State(automaton.GetLastStateId().ToString());
+            //State newState1 = new State(automaton.GetLastStateId().ToString());
+
+            automaton.StateList.AddRange(tempStateList);
+            automaton.ConnectingStates.AddRange(tempStateList);
+
+            
+
+            automaton = ParseRE(automaton, expression, 0, transIndex+1);
+
+            foreach (State item in tempStateList)
+            {
+                automaton.ConnectingStates.Remove(item);
+            }
+
+            return automaton;
+        }
+
         static int GetMatchingBracket(string input)
         {
             int output = 0;
@@ -536,8 +591,23 @@ namespace ALE2
                     transition -= 1;
                     //return automaton;
                 }
-                else if (c == '&')
+                else if (c == '.')//AND
                 {
+
+                    string tempExpression = GetString(expression, inputIndex+1);
+                    int bracketId = GetMatchingBracket(tempExpression);
+                    string tempSubExpression;
+
+                    if (bracketId == tempExpression.Length - tempExpression.Count(x => x == ')'))
+                    {
+                        tempSubExpression = tempExpression.Substring(1, bracketId - 1);
+                    }
+                    else
+                    {
+                        tempSubExpression = tempExpression.Substring(1, bracketId - 1);
+                    }
+
+                    automaton = ParseAND(automaton, tempSubExpression, transition, leftRight);
 
                 }
                 else if (c == '|')

@@ -221,22 +221,50 @@ namespace ALE2
 
             foreach (State state in tempStates)
             {
-                if (state.TransIndex == transitionIndex)
-                {
-                    if (!isStartFinal && state.IsStart == isStartFinal)
-                    {
-                        State tempe = StateList.Find(x => x == state);
-                        tempe.IsFinal = false;
-                        return state;
-                    }
+                //if (isStartFinal)
+                //{
+                //    if (state.IsStart == isStartFinal)
+                //    {
+                //        State tempe = StateList.Find(x => x == state);
+                //        tempe.IsStart = false;
+                //        return state;
+                //    }
+                //}
 
-                    else if (isStartFinal && state.IsStart == isStartFinal)
+                if (isStartFinal)
+                {
+                    if (state.IsStart == true)
                     {
                         State tempe = StateList.Find(x => x == state);
                         tempe.IsStart = false;
                         return state;
                     }
                 }
+                else
+                {
+                    if (state.IsFinal == true)
+                    {
+                        State tempe = StateList.Find(x => x == state);
+                        tempe.IsFinal = false;
+                        return state;
+                    }
+                }
+
+
+                //if (!isStartFinal && state.IsStart == isStartFinal)
+                //{
+                //    State tempe = StateList.Find(x => x == state);
+                //    tempe.IsFinal = false;
+                //    return state;
+                //}
+
+                //else if (isStartFinal && state.IsStart == isStartFinal)
+                //{
+                //    State tempe = StateList.Find(x => x == state);
+                //    tempe.IsStart = false;
+                //    return state;
+                //}
+
             }
             return null;
         }
@@ -366,9 +394,10 @@ namespace ALE2
                             if (state.CurrentTransitionIndex != input.Length && (item.CanTravel(input[index])))
                             {
                                 item.id = index;
-                                if (item.TransitionChar == '_')
+                                if (item.TransitionChar == '_' && !item.HasTravelled)
                                 {
                                     item.EndState.CurrentTransitionIndex = index;
+                                    item.HasTravelled = true;
                                     q.Enqueue(item.EndState);
                                 }
                                 else
@@ -384,7 +413,7 @@ namespace ALE2
                                 }
                                 //q.Enqueue(item.EndState);
                             }
-                            else if (item.TransitionChar == '_')
+                            else if (item.TransitionChar == '_' && !item.HasTravelled)
                             {
                                 item.id = index;
 
@@ -395,7 +424,7 @@ namespace ALE2
                                 tempState.IsStart = item.EndState.IsStart;
                                 tempState.CurrentTransitionIndex = index;
 
-                               // item.EndState.CurrentTransitionIndex = index;
+                                // item.EndState.CurrentTransitionIndex = index;
                                 q.Enqueue(tempState);
                             }
                             if (input == "_" && state.IsFinal)

@@ -14,6 +14,8 @@ namespace ALE2
 
         string graphValue;
 
+        bool hasTravelled = false;
+
         public int id;
         /// <summary>
         /// Initial transition state
@@ -33,6 +35,15 @@ namespace ALE2
             set { transitionChar = value; }
         }
 
+
+        /// <summary>
+        /// If the transition was used before
+        /// </summary>
+        public bool HasTravelled
+        {
+            get { return hasTravelled; }
+            set { hasTravelled = value; }
+        }
 
         /// <summary>
         /// Ending state of transition
