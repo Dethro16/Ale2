@@ -13,6 +13,7 @@ namespace ALE2
         State endState;
 
         string graphValue;
+        bool hasTravelled = false;
 
         public int id;
         /// <summary>
@@ -41,6 +42,15 @@ namespace ALE2
         {
             get { return endState; }
             set { endState = value; }
+        }
+
+        /// <summary>
+        /// If the transition was used before
+        /// </summary>
+        public bool HasTravelled
+        {
+            get { return hasTravelled; }
+            set { hasTravelled = value; }
         }
 
         /// <summary>

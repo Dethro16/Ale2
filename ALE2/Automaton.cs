@@ -366,9 +366,10 @@ namespace ALE2
                             if (state.CurrentTransitionIndex != input.Length && (item.CanTravel(input[index])))
                             {
                                 item.id = index;
-                                if (item.TransitionChar == '_')
+                                if (item.TransitionChar == '_' && !item.HasTravelled)
                                 {
                                     item.EndState.CurrentTransitionIndex = index;
+                                    item.HasTravelled = true;
                                     q.Enqueue(item.EndState);
                                 }
                                 else
@@ -384,7 +385,7 @@ namespace ALE2
                                 }
                                 //q.Enqueue(item.EndState);
                             }
-                            else if (item.TransitionChar == '_')
+                            else if (item.TransitionChar == '_' && !item.HasTravelled)
                             {
                                 item.id = index;
 
