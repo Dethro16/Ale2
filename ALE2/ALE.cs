@@ -235,15 +235,19 @@ namespace ALE2
                 MessageBox.Show("Please provide a regular expression.");
                 return;
             }
-            
-            Automaton automaton = new Automaton(new List<State>(), new List<string>(), new List<Transition>());
 
-            parser.ParseRE(automaton, tBRE.Text);
-            automaton.AssignTransitions();
-            automaton.AssignGraphViz();
+            Automaton automata = new Automaton(new List<State>(), new List<string>(), new List<Transition>());
+            Tokenizer t = new Tokenizer();
+            parser.StrippedTokenList = t.Scan(tBRE.Text);
+            Node temp = parser.ParseTree();
+
+            automata = parser.ParseTreeToAutomata(temp, automata);
+            //parser.ParseRE(automaton, tBRE.Text);
+            automata.AssignTransitions();
+            automata.AssignGraphViz();
 
 
-            parser.GeneratePicture(automaton.StateList, automaton.TransitionList);
+            parser.GeneratePicture(automata.StateList, automata.TransitionList);
 
             pictureBox2.ImageLocation = AppDomain.CurrentDomain.BaseDirectory + "abc.png";
             //parser.ParseRegExToNode(tBRE.Text);

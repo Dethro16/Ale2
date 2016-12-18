@@ -157,7 +157,10 @@ namespace ALE2
                     {
                         state.OutTrans.Add(transition);
                     }
-
+                    if (transition.EndState == null)
+                    {
+                        continue;
+                    }
                     if (state.StringValue == transition.EndState.StringValue)
                     {
                         state.InTrans.Add(transition);
@@ -191,6 +194,10 @@ namespace ALE2
 
             foreach (Transition transition in TransitionList)
             {
+                if (transition.EndState==null)
+                {
+                    continue;
+                }
                 transition.GraphValue = "\"" + transition.InitialState.StringValue + "\"" + " -> " + "\"" + transition.EndState.StringValue + "\"" + "[label=\"" + transition.TransitionChar + "\"]";
             }
 
@@ -201,7 +208,7 @@ namespace ALE2
             try
             {
                 var item = StateList.Max(x => x.Id);
-                return item;
+                return item+1;
             }
             catch (Exception)
             {

@@ -32,12 +32,12 @@ namespace ALE2
                 }
                 else if (c == '(')
                 {
-                    tokens.Add(new OpenParenthesis());
+                    //tokens.Add(new OpenParenthesis());
                     reader.Read();
                 }
                 else if (c == ')')
                 {
-                    tokens.Add(new ClosedParenthesis());
+                   // tokens.Add(new ClosedParenthesis());
                     reader.Read();
                 }
                 else if (c == '*')
@@ -57,7 +57,7 @@ namespace ALE2
                 }
                 else if (c == ',')
                 {
-                    tokens.Add(new commaToken());
+                    //tokens.Add(new commaToken());
                     reader.Read();
                 }
                 else
