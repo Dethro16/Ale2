@@ -55,6 +55,11 @@ namespace ALE2
                     tokens.Add(new OrToken());
                     reader.Read();
                 }
+                else if (c == '.')
+                {
+                    tokens.Add(new ConcatToken());
+                    reader.Read();
+                }
                 else if (c == ',')
                 {
                     //tokens.Add(new commaToken());
@@ -89,6 +94,15 @@ namespace ALE2
 
     public class Operand : Token
     {
+    }
+
+
+    public class ConcatToken : Operand
+    {
+        public override string ToString()
+        {
+            return ".";
+        }
     }
 
     public class OpenParenthesis : Parenthesis

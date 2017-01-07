@@ -203,6 +203,25 @@ namespace ALE2
 
         }
 
+        public void AssignStates()
+        {
+            foreach (State state in StateList)
+            {
+                if (state.OutTrans.Count == 0) //Final
+                {
+                    state.IsStart = false;
+                    state.IsFinal = true;
+                }
+
+                if (state.InTrans.Count == 0)
+                {
+                    state.IsStart = true;
+                    state.IsFinal = false;
+                }
+            }
+        }
+
+
         public int GetLastStateId()
         {
             try

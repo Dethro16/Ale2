@@ -245,7 +245,7 @@
             this.tBRE.Name = "tBRE";
             this.tBRE.Size = new System.Drawing.Size(199, 20);
             this.tBRE.TabIndex = 28;
-            this.tBRE.Text = "|(a,|(b,c))";
+            this.tBRE.Text = "|(A,.(B,C))";
             // 
             // label11
             // 

@@ -243,8 +243,11 @@ namespace ALE2
 
             parser.stateCount = 0;
             automata = parser.ParseTreeToAutomata(temp, automata);
-            //parser.ParseRE(automaton, tBRE.Text);
+
             automata.AssignTransitions();
+            automata.AssignStates();
+            //parser.ParseRE(automaton, tBRE.Text);
+
             automata.AssignGraphViz();
 
 

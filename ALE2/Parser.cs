@@ -520,41 +520,39 @@ namespace ALE2
 
             return original;
         }
-      public  int stateCount = 0;
+        public int stateCount = 0;
 
         public Automaton ParseTreeToAutomata(Node node, Automaton automata, State initial = null, State final = null)
         {
+            Automaton subAutomaton = new Automaton(null, null, null);
             Automaton tempAutomata = new Automaton(new List<State>(), new List<string>(), new List<Transition>());
             //State initial = new State(automata.GetLastStateId().ToString(), automata.GetLastStateId());
             if (initial == null)
             {
                 initial = new State(stateCount.ToString(), stateCount);
                 stateCount++;
+                //tempAutomata.StateList.Add(initial);
             }
 
 
             initial.IsStart = true;
             tempAutomata.StateList.Add(initial);
-            if (final!= null)
+            if (final != null)
             {
                 tempAutomata.StateList.Add(final);
             }
 
-            if (node.Token is Operand)
+            if (node.Token is OrToken)
             {
-                //if (nestedIndex == 1)//Now we can get the start and final one
-                //{
-                //    initial = null;
-                //}
-
                 State start1 = new State(stateCount.ToString(), stateCount);
                 tempAutomata.StateList.Add(start1);
                 stateCount++;
 
                 State end1 = new State(stateCount.ToString(), stateCount);
-                // tempAutomata.StateList.Add(end1);
                 stateCount++;
-                Automaton subAutomaton = new Automaton(null, null, null);
+
+
+
                 if (final == null)
                 {
                     tempAutomata.StateList.Add(end1);
@@ -562,24 +560,13 @@ namespace ALE2
                 }
                 else
                 {
-
                     subAutomaton = ParseTreeToAutomata(node.Children.First(), tempAutomata, start1, end1);
-                                        //end1 = final;
-                    //tempAutomata.StateList.Add(final);
                 }
 
                 node.Children.RemoveAt(0);
                 tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, start1, end1);
 
                 tempAutomata.TransitionList.Add(new Transition(initial, start1, '_'));
-
-
-                //State start2 = new State(stateCount.ToString(), stateCount);
-                //tempAutomata.StateList.Add(start2);
-                //tempAutomata.TransitionList.Add(new Transition(initial, start2, '_'));
-                //stateCount++;
-                //State end2 = new State(stateCount.ToString(), stateCount);
-                //stateCount++;
 
                 State start2 = new State(stateCount.ToString(), stateCount);
                 tempAutomata.StateList.Add(start2);
@@ -607,93 +594,42 @@ namespace ALE2
 
                 tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, start2, end2);
 
-                //subAutomaton = ParseTreeToAutomata(node.Children.Last(), tempAutomata, start1, end1);
+            }
 
-                //tempAutomata = ParseTreeToAutomata(node.get)
+            if (node.Token is AndToken)
+            {
+                State middle = new State(stateCount.ToString(), stateCount);
+                stateCount++;
+                tempAutomata.StateList.Add(middle);
 
+                if (initial == null)
+                {
 
+                }
+                else
+                {
+                    subAutomaton = ParseTreeToAutomata(node.Children.First(), tempAutomata, initial, middle);
+                    tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, initial, middle);
 
-                //if (final == null)
-                //{
-                //    final = end2;
-                //    tempAutomata.StateList.Add(end2);
-                //}
-                //else
-                //{
-                //    State finalOPState = new State(stateCount.ToString(), stateCount);
-                //    stateCount++;
-                //    tempAutomata.StateList.Add(finalOPState);
-                //    tempAutomata.TransitionList.Add(new Transition(end1, finalOPState, '_'));
-                //    tempAutomata.TransitionList.Add(new Transition(end2, finalOPState, '_'));
+                }
+               // Automaton subAutomaton = new Automaton(null, null, null);
+                node.Children.RemoveAt(0);
+                if (final == null)
+                {
+                    final = new State(stateCount.ToString(), stateCount);
+                    stateCount++;
+                    tempAutomata.StateList.Add(final);
 
-                //    end2 = final;
-                //    tempAutomata.StateList.Add(finalOPState);
-                //}
+                    subAutomaton = ParseTreeToAutomata(node.Children.First(), tempAutomata, middle, final);
+                    //tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, middle, final);
 
-
-
-
-                //subAutomaton = ParseTreeToAutomata(node.Children.Last(), tempAutomata, start2, end2);
-                //tempAutomata.TransitionList.Add(new Transition(initial, start2, '_'));
-
-                ////tempAutomata.StateList.Add();
-
-                //tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, start2, end2);
-
-                //tempAutomata.TransitionList.Add(new Transition(initial, start1, '_'));
-
-
-                //State start2 = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
-                //tempAutomata.StateList.Add(start2);
-
-                //tempAutomata.TransitionList.Add(new Transition(initial, start1, '_'));
-                //tempAutomata.TransitionList.Add(new Transition(initial, start2, '_'));
-
-
-                //State end2 = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
-                //tempAutomata.StateList.Add(end2);
-
-
-                //State final = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
-                //tempAutomata.TransitionList.Add(new Transition(end1, final, '_'));
-                //tempAutomata.TransitionList.Add(new Transition(end2, final, '_'));
-                //tempAutomata.StateList.Add(final);
-
-
-
-                //for (int i = 0; i < node.Children.Count; i++)
-                //{
-                //    Automaton subAutomata = ParseTreeToAutomata(node.Children[i], tempAutomata, nestedIndex + 1);
-
-                //    if (i == 0)
-                //    {
-                //        if (subAutomata.TransitionList.Count == 1)
-                //        {
-                //            //tempAutomata.TransitionList.Add(new Transition(start1, start2, subAutomata.TransitionList.Last().TransitionChar));
-                //        }
-                //        else
-                //        {
-                //            // tempAutomata.TransitionList.Add(new Transition(start1, end1, subAutomata.TransitionList.Last().TransitionChar));
-                //        }
-                //    }
-                //    if (i == 1)
-                //    {
-                //        if (subAutomata.TransitionList.Count == 1)
-                //        {
-                //            //tempAutomata.TransitionList.Add(new Transition(start1, start2, subAutomata.TransitionList.Last().TransitionChar));
-                //        }
-                //        else
-                //        {
-                //            //State end1 = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
-                //            //tempAutomata.StateList.Add(end1);
-                //            //State end2 = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
-                //            //tempAutomata.StateList.Add(end2);
-                //            //tempAutomata.TransitionList.Add(new Transition(end1, end2, subAutomata.TransitionList.Last().TransitionChar));
-                //            //tempAutomata = AddSubAutomata(tempAutomata, subAutomata);
-                //        }
-
-                //    }
-                //}
+                }
+                else
+                {
+                    subAutomaton = ParseTreeToAutomata(node.Children.First(), tempAutomata, middle, final);
+                    
+                }
+                tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, middle, final);
 
             }
 
