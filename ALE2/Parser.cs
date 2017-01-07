@@ -489,21 +489,26 @@ namespace ALE2
         {
             if (subAutomata.TransitionList.Count == 1)
             {
-                subAutomata.TransitionList.Last().InitialState = original.StateList[0];
-                subAutomata.TransitionList.Last().EndState = original.StateList[1];
+                //subAutomata.TransitionList.Last().InitialState = original.StateList[0];
+                //subAutomata.TransitionList.Last().EndState = original.StateList[1];
                 original.TransitionList.Add(subAutomata.TransitionList.Last());
             }
             else//Multiple ones
             {
 
-                int lastId = original.GetLastStateId();
+                //int lastId = original.GetLastStateId();
 
-                foreach (var item in subAutomata.StateList)
-                {
-                    lastId += 1;
-                    item.Id = lastId;
-                    item.StringValue = lastId.ToString();
-                }
+                //foreach (State item in subAutomata.StateList)
+                //{
+
+                //}
+
+                //foreach (var item in subAutomata.StateList)
+                //{
+                //    lastId += 1;
+                //    item.Id = lastId;
+                //    item.StringValue = lastId.ToString();
+                //}
 
 
                 original.StateList.AddRange(subAutomata.StateList);
@@ -515,13 +520,25 @@ namespace ALE2
 
             return original;
         }
+      public  int stateCount = 0;
 
-        public Automaton ParseTreeToAutomata(Node node, Automaton automata, int nestedIndex = 0)
+        public Automaton ParseTreeToAutomata(Node node, Automaton automata, State initial = null, State final = null)
         {
             Automaton tempAutomata = new Automaton(new List<State>(), new List<string>(), new List<Transition>());
-            State initial = new State(automata.GetLastStateId().ToString(), automata.GetLastStateId());
+            //State initial = new State(automata.GetLastStateId().ToString(), automata.GetLastStateId());
+            if (initial == null)
+            {
+                initial = new State(stateCount.ToString(), stateCount);
+                stateCount++;
+            }
+
+
             initial.IsStart = true;
             tempAutomata.StateList.Add(initial);
+            if (final!= null)
+            {
+                tempAutomata.StateList.Add(final);
+            }
 
             if (node.Token is Operand)
             {
@@ -530,29 +547,98 @@ namespace ALE2
                 //    initial = null;
                 //}
 
-
-                State start1 = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
+                State start1 = new State(stateCount.ToString(), stateCount);
                 tempAutomata.StateList.Add(start1);
-                State end1 = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
-                tempAutomata.StateList.Add(end1);
+                stateCount++;
 
-                Automaton subAutomaton = ParseTreeToAutomata(node.Children.First(), tempAutomata);
+                State end1 = new State(stateCount.ToString(), stateCount);
+                // tempAutomata.StateList.Add(end1);
+                stateCount++;
+                Automaton subAutomaton = new Automaton(null, null, null);
+                if (final == null)
+                {
+                    tempAutomata.StateList.Add(end1);
+                    subAutomaton = ParseTreeToAutomata(node.Children.First(), tempAutomata, start1, end1);
+                }
+                else
+                {
 
+                    subAutomaton = ParseTreeToAutomata(node.Children.First(), tempAutomata, start1, end1);
+                                        //end1 = final;
+                    //tempAutomata.StateList.Add(final);
+                }
+
+                node.Children.RemoveAt(0);
                 tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, start1, end1);
 
-                //tempAutomata.TransitionList.Add(new Transition(initial, start1, '_'));
+                tempAutomata.TransitionList.Add(new Transition(initial, start1, '_'));
 
-                State start2 = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
-                tempAutomata.StateList.Add(start2);
-                State end2 = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
-                tempAutomata.StateList.Add(end2);
 
-                subAutomaton = ParseTreeToAutomata(node.Children.Last(), tempAutomata);
+                //State start2 = new State(stateCount.ToString(), stateCount);
+                //tempAutomata.StateList.Add(start2);
                 //tempAutomata.TransitionList.Add(new Transition(initial, start2, '_'));
+                //stateCount++;
+                //State end2 = new State(stateCount.ToString(), stateCount);
+                //stateCount++;
 
-                //tempAutomata.StateList.Add();
+                State start2 = new State(stateCount.ToString(), stateCount);
+                tempAutomata.StateList.Add(start2);
+                tempAutomata.TransitionList.Add(new Transition(initial, start2, '_'));
+                stateCount++;
+                State end2 = new State(stateCount.ToString(), stateCount);
+                stateCount++;
+
+                if (final == null)
+                {
+                    State finalOPState = new State(stateCount.ToString(), stateCount);
+                    stateCount++;
+                    finalOPState.IsFinal = true;
+                    tempAutomata.StateList.Add(finalOPState);
+                    tempAutomata.TransitionList.Add(new Transition(end1, finalOPState, '_'));
+                    tempAutomata.TransitionList.Add(new Transition(end2, finalOPState, '_'));
+                }
+                else
+                {
+                    tempAutomata.TransitionList.Add(new Transition(end1, final, '_'));
+                    tempAutomata.TransitionList.Add(new Transition(end2, final, '_'));
+                }
+
+                subAutomaton = ParseTreeToAutomata(node.Children.First(), tempAutomata, start2, end2);
 
                 tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, start2, end2);
+
+                //subAutomaton = ParseTreeToAutomata(node.Children.Last(), tempAutomata, start1, end1);
+
+                //tempAutomata = ParseTreeToAutomata(node.get)
+
+
+
+                //if (final == null)
+                //{
+                //    final = end2;
+                //    tempAutomata.StateList.Add(end2);
+                //}
+                //else
+                //{
+                //    State finalOPState = new State(stateCount.ToString(), stateCount);
+                //    stateCount++;
+                //    tempAutomata.StateList.Add(finalOPState);
+                //    tempAutomata.TransitionList.Add(new Transition(end1, finalOPState, '_'));
+                //    tempAutomata.TransitionList.Add(new Transition(end2, finalOPState, '_'));
+
+                //    end2 = final;
+                //    tempAutomata.StateList.Add(finalOPState);
+                //}
+
+
+
+
+                //subAutomaton = ParseTreeToAutomata(node.Children.Last(), tempAutomata, start2, end2);
+                //tempAutomata.TransitionList.Add(new Transition(initial, start2, '_'));
+
+                ////tempAutomata.StateList.Add();
+
+                //tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, start2, end2);
 
                 //tempAutomata.TransitionList.Add(new Transition(initial, start1, '_'));
 
@@ -613,8 +699,12 @@ namespace ALE2
 
             if (node.Token is VariableToken)
             {
-                State final = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
-                tempAutomata.StateList.Add(final);
+                if (final == null)
+                {
+                    final = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
+                }
+                //State final = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
+                //tempAutomata.StateList.Add(final);
                 tempAutomata.TransitionList.Add(new Transition(initial, final, node.Token.ToString()[0]));
             }
 

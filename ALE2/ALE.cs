@@ -241,6 +241,7 @@ namespace ALE2
             parser.StrippedTokenList = t.Scan(tBRE.Text);
             Node temp = parser.ParseTree();
 
+            parser.stateCount = 0;
             automata = parser.ParseTreeToAutomata(temp, automata);
             //parser.ParseRE(automaton, tBRE.Text);
             automata.AssignTransitions();
