@@ -23,6 +23,7 @@ namespace ALE2
 
         private void btnRead_Click(object sender, EventArgs e)
         {
+
             if (cBDirectory.Text == "" || cBFiles.Text == "")
             {
                 MessageBox.Show("Select a directory and/or file!");
@@ -33,10 +34,27 @@ namespace ALE2
             automata.AssignGraphViz();
 
             rTBTestCase.Clear();
+            rTBTestResults.Clear();
+            rTBWords.Clear();
+            //AppendToRTB(rTBTestCase, new List<string>() { automata.CheckTestDFA() });
+            rTBTestCase.AppendText("is DFA: " + automata.Dfa + "\n");
+            List<string> toTb = new List<string>();
+            if (automata.CheckDFA() == automata.Dfa)
+            {
+                toTb.Add("DFA: " + automata.Dfa + " V");
+            }
+            else
+            {
+                toTb.Add("DFA: " + automata.Dfa + " X");
+            }
 
-            AppendToRTB(rTBTestCase, new List<string>() { automata.CheckTestDFA() });
+            AppendToRTB(rTBTestResults, toTb);
+
             AppendToRTB(rTBTestCase, automata.CheckTestWords());
-            automata.CheckTestWords();
+
+
+            AppendToRTB(rTBTestResults, automata.TestWords);
+            //automata.CheckTestWords();
 
 
             lbDfa.Text = automata.CheckDFA().ToString();
@@ -46,8 +64,34 @@ namespace ALE2
             parser.GeneratePicture(automata.StateList, automata.TransitionList);
 
             pictureBox1.ImageLocation = AppDomain.CurrentDomain.BaseDirectory + "abc.png";
-        }
 
+            automata.Words.Clear();
+            automata.ClearStates();
+            automata.ClearTransitions();
+            //check how many words
+            if (automata.CheckAllWords(automata.StateList[0], ""))
+            {
+                lbFinite.Text = "True";
+                lbFinite.BackColor = Color.Green;
+            }
+            else
+            {
+                lbFinite.Text = "False";
+                lbFinite.BackColor = Color.Red;
+            }
+            
+            
+            rTBWords.AppendText("All words:\n");
+            foreach (Word word in automata.Words)
+            {
+
+                rTBWords.AppendText("Word: "+word.StringValue);
+                rTBWords.AppendText("\n");
+                rTBWords.AppendText("Accepted: " + word.Accepted);
+                rTBWords.AppendText("\n");
+            }
+
+        }
         /// <summary>
         /// Returns a list of strings with filenames
         /// </summary>
@@ -128,12 +172,17 @@ namespace ALE2
             {
                 if (item.Contains('X'))//wrong
                 {
-                    RichTextBoxExtensions.AppendText(rTBTestCase, item, Color.Red);
+                    RichTextBoxExtensions.AppendText(textBox, item, Color.Red);
                     textBox.AppendText("\n");
                 }
                 else if (item.Contains('V'))
                 {
-                    RichTextBoxExtensions.AppendText(rTBTestCase, item, Color.Green);
+                    RichTextBoxExtensions.AppendText(textBox, item, Color.Green);
+                    textBox.AppendText("\n");
+                }
+                else
+                {
+                    textBox.AppendText(item);
                     textBox.AppendText("\n");
                 }
             }
@@ -171,6 +220,7 @@ namespace ALE2
         private void cBDirectory_SelectedIndexChanged(object sender, EventArgs e)
         {
             List<string> fileList = GetFilesFromDir(null, cBDirectory.SelectedItem.ToString());
+            cBFiles.Items.Clear();
             if (fileList == null)
             {
                 MessageBox.Show("Directory does not exist!");
@@ -228,6 +278,8 @@ namespace ALE2
             }
         }
 
+
+
         private void btnCreateNDFA_Click(object sender, EventArgs e)
         {
             if (tBRE.Text == "")
@@ -244,8 +296,10 @@ namespace ALE2
             parser.stateCount = 0;
             automata = parser.ParseTreeToAutomata(temp, automata);
 
+            //automata.AssignAlphabet();
             automata.AssignTransitions();
             automata.AssignStates();
+            parser.SaveNDFAToFile(automata);
             //parser.ParseRE(automaton, tBRE.Text);
 
             automata.AssignGraphViz();

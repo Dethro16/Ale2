@@ -10,6 +10,12 @@ namespace ALE2
 {
     class Parser
     {
+        string fileCodeNDFA;
+        public string FileCodeNDFA
+        {
+            get { return fileCodeNDFA; }
+            set { fileCodeNDFA = value; }
+        }
 
         List<Token> strippedTokenList = new List<Token>();
         public List<Token> StrippedTokenList
@@ -550,7 +556,7 @@ namespace ALE2
 
                 State end1 = new State(stateCount.ToString(), stateCount);
                 stateCount++;
-
+                tempAutomata.StateList.Add(end1);
 
 
                 if (final == null)
@@ -574,7 +580,7 @@ namespace ALE2
                 stateCount++;
                 State end2 = new State(stateCount.ToString(), stateCount);
                 stateCount++;
-
+                tempAutomata.StateList.Add(end2);
                 if (final == null)
                 {
                     State finalOPState = new State(stateCount.ToString(), stateCount);
@@ -596,6 +602,35 @@ namespace ALE2
 
             }
 
+            if (node.Token is RepetitionToken)
+            {
+
+                State start1 = new State(stateCount.ToString(), stateCount);
+                stateCount++;
+                State end1 = new State(stateCount.ToString(), stateCount);
+                stateCount++;
+                tempAutomata.StateList.Add(start1);
+                tempAutomata.StateList.Add(end1);
+
+                if (final == null)
+                {
+                    State tempFinal = new State(stateCount.ToString(), stateCount);
+                    stateCount++;
+                    final = tempFinal;
+                }
+                tempAutomata.StateList.Add(final);
+
+                tempAutomata.TransitionList.Add(new Transition(initial, start1, '_'));
+                tempAutomata.TransitionList.Add(new Transition(initial, final, '_'));
+                tempAutomata.TransitionList.Add(new Transition(end1, start1, '_'));
+                tempAutomata.TransitionList.Add(new Transition(end1, final, '_'));
+
+                subAutomaton = ParseTreeToAutomata(node.Children.First(), tempAutomata, start1, end1);
+
+                tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, start1, end1);
+
+            }
+
             if (node.Token is AndToken)
             {
                 State middle = new State(stateCount.ToString(), stateCount);
@@ -612,7 +647,7 @@ namespace ALE2
                     tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, initial, middle);
 
                 }
-               // Automaton subAutomaton = new Automaton(null, null, null);
+                // Automaton subAutomaton = new Automaton(null, null, null);
                 node.Children.RemoveAt(0);
                 if (final == null)
                 {
@@ -627,7 +662,7 @@ namespace ALE2
                 else
                 {
                     subAutomaton = ParseTreeToAutomata(node.Children.First(), tempAutomata, middle, final);
-                    
+
                 }
                 tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, middle, final);
 
@@ -638,14 +673,58 @@ namespace ALE2
                 if (final == null)
                 {
                     final = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
+                    tempAutomata.StateList.Add(final);
                 }
-                //State final = new State(tempAutomata.GetLastStateId().ToString(), tempAutomata.GetLastStateId());
-                //tempAutomata.StateList.Add(final);
+
                 tempAutomata.TransitionList.Add(new Transition(initial, final, node.Token.ToString()[0]));
             }
 
             return tempAutomata;
         }
+
+
+
+
+        public void SaveNDFAToFile(Automaton auto)
+        {
+            fileCodeNDFA = string.Empty;
+            fileCodeNDFA += "alphabet: ";
+            foreach (string letter in auto.Alphabet)
+            {
+                fileCodeNDFA += letter;
+            }
+            fileCodeNDFA = fileCodeNDFA.Remove(fileCodeNDFA.Length - 1);
+            fileCodeNDFA += "\nstates: ";
+            foreach (State item in auto.StateList)
+            {
+                fileCodeNDFA += item.StringValue + ",";
+            }
+            fileCodeNDFA = fileCodeNDFA.Remove(fileCodeNDFA.Length - 1);
+
+            fileCodeNDFA += "\nfinal: ";
+
+            foreach (State state in auto.StateList)
+            {
+                if (state.IsFinal)
+                {
+                    fileCodeNDFA += state.StringValue + ",";
+                }
+
+            }
+            fileCodeNDFA = fileCodeNDFA.Remove(fileCodeNDFA.Length - 1);
+
+            fileCodeNDFA += "\ntransitions:\n";
+            foreach (Transition item in auto.TransitionList)
+            {
+                fileCodeNDFA += item.InitialState.StringValue + "," + item.TransitionChar.ToString() + " --> " + item.EndState.StringValue + "\n";
+            }
+            fileCodeNDFA += "end.";
+
+
+            File.WriteAllText(@"..\..\Files\ndfaFile.txt", fileCodeNDFA);
+        }
+
+
 
         public Node ParseTree(int temp = 0)
         {
@@ -660,19 +739,6 @@ namespace ALE2
                 if (StrippedTokenList[0] is Operand)
                 {
                     nodes.Add(ParseTree(nodeNumber));
-                    //if (StrippedTokenList[0] is NandToken)
-                    //{
-
-                    //}
-                    //if (StrippedTokenList[0] is NegateToken)
-                    //{
-                    //    nodes.Add(ParseTree());
-                    //}
-                    //else //Not Negate
-                    //{
-                    //    nodes.Add(ParseTree());
-                    //}
-
                 }
                 else if (StrippedTokenList[0] is VariableToken)
                 {
@@ -681,7 +747,7 @@ namespace ALE2
                     StrippedTokenList.RemoveAt(0);
                 }
 
-                if (nodes.Count == 2)
+                if (nodes.Count == 2 || (nodes.Count == 1 && SourceToken is RepetitionToken))
                 {
                     break;
                 }
@@ -696,203 +762,7 @@ namespace ALE2
             return tempNode;
         }
 
-        public Automaton ParseRE(Automaton automaton, string expression, int inputIndex = 0)
-        {
 
-            for (; inputIndex < expression.Length; inputIndex++)
-            {
-                char c = expression[inputIndex];//Current character
-
-                if (Char.IsLetter(c))//Variable
-                {
-                    if (automaton.currentStates.Count == 0)//If no current state, no operation applied so empty a, could be simple state 0 -> state 1 with a transition
-                    {
-                        continue;
-                    }
-
-                    automaton.currentStates.Last();
-                    automaton.TransitionList.Add(new Transition(automaton.currentStates.First(), null, c));
-                    automaton.currentStates.Remove(automaton.TransitionList.Last().InitialState);
-                }
-
-                if (c == '.') //Concatonate
-                {
-
-                }
-
-                if (c == '|') //OR
-                {
-                    int stateId = automaton.GetLastStateId();
-                    State initial = null;
-                    State finalState = null;
-                    if (automaton.currentStates.Count == 0)//No current state so begining OR
-                    {
-                        initial = new State(stateId.ToString(), stateId);
-                        automaton.StateList.Add(initial);
-                        stateId++;
-                    }
-                    else//This or comes from another nested operator so we must get that state
-                    {
-                        initial = automaton.currentStates.First();
-                        automaton.currentStates.Remove(initial);
-                        stateId++;
-                        finalState = automaton.StateList[automaton.StateList.Count - 2];
-                        //stateId++;
-                        //initial = new State(stateId.ToString(), stateId);
-                        //automaton.StateList.Add(initial);
-                        //stateId++;
-                    }
-
-                    State left = new State(stateId.ToString(), stateId);
-                    automaton.StateList.Add(left);
-                    stateId++;
-                    //Created the left side
-                    //create now the receiver for left side, we don't know what's inbetween
-
-                    State leftCont = new State(stateId.ToString(), stateId);
-                    automaton.StateList.Add(leftCont);
-                    stateId++;
-
-                    automaton.TransitionList.Add(new Transition(initial, left, '_'));
-                    //Created the right side
-                    //create now the receiver for right side, we don't know what's inbetween
-                    State right = new State(stateId.ToString(), stateId);
-                    automaton.StateList.Add(right);
-                    stateId++;
-                    //Created the left side
-                    //create now the receiver for left side, we don't know what's inbetween
-
-                    State rightCont = new State(stateId.ToString(), stateId);
-                    automaton.StateList.Add(rightCont);
-                    stateId++;
-
-                    automaton.TransitionList.Add(new Transition(initial, right, '_'));
-
-
-
-                    automaton.currentStates.Add(left);
-                    automaton.currentStates.Add(right);
-
-                    if (finalState == null)
-                    {
-                        automaton.StateList.Add(new State(stateId.ToString(), stateId));
-                        finalState = automaton.StateList.Last();
-                    }
-
-
-                    //automaton.StateList.Add(new State(stateId.ToString(), stateId));
-                    //State finalState = automaton.StateList.Last();
-
-                    string tempExpression = expression.Substring(inputIndex);
-                    int bracketPos = GetMatchingBracket(tempExpression);
-                    int tempInd = inputIndex + 1;
-
-                    tempExpression = expression.Substring(tempInd);
-
-                    Automaton tempAuto = ParseRE(automaton, tempExpression);
-                    //automaton = ParseRE(automaton, tempExpression);
-
-                    List<Transition> tempList = automaton.TransitionList.Skip(Math.Max(0, automaton.TransitionList.Count() - 2)).ToList();
-                    tempList.First().EndState = leftCont;
-                    tempList.Last().EndState = rightCont;
-
-
-                    automaton.TransitionList.Add(new Transition(tempList.First().EndState, finalState, '_'));
-                    automaton.TransitionList.Add(new Transition(tempList.Last().EndState, finalState, '_'));
-                    return automaton;
-                }
-
-                if (c == '*') //Star
-                {
-
-                }
-
-
-
-            }
-
-
-            return automaton;
-        }
-
-        //public Automaton ParseRE(Automaton automaton, string expression, int inputIndex = 0, int transition = 0, bool leftRight = false)
-        //{
-
-        //    for (; inputIndex < expression.Length; inputIndex++)
-        //    {
-        //        char c = expression[inputIndex];
-
-        //        if (Char.IsWhiteSpace(c))
-        //        {
-        //            continue;
-        //        }
-
-        //        if (Char.IsLetter(c))
-        //        {
-        //            automaton = ParseLetter(automaton, c, automaton.GetLastStateId(), transition);
-        //            continue;
-        //        }
-
-        //        if (c == '(')
-        //        {
-        //            leftRight = false;
-        //            string tempExpression = GetString(expression, inputIndex);
-        //            int bracketId = GetMatchingBracket(tempExpression);
-        //            string tempSubExpression;
-        //            if (bracketId == tempExpression.Length - tempExpression.Count(x => x == ')'))
-        //            {
-        //                tempSubExpression = tempExpression.Substring(1, bracketId - 1);
-        //            }
-        //            else
-        //            {
-        //                tempSubExpression = tempExpression.Substring(1, bracketId - 1);
-        //            }
-
-        //            automaton = ParseRE(automaton, tempSubExpression, 0, transition);
-
-        //            string temp2 = GetString(expression, inputIndex - 1);
-        //            int bracketAmount = temp2.Count(x => x == ')');
-
-        //            if (GetMatchingBracket(temp2) == temp2.Length - bracketAmount)
-        //            {
-        //                inputIndex = 0;
-        //                return automaton;
-        //            }
-        //            else
-        //            {
-        //                continue;
-        //            }
-
-        //        }
-        //        else if (c == ')')
-        //        {
-        //            //leftRight = false;
-        //            transition -= 1;
-        //            //return automaton;
-        //        }
-        //        else if (c == '&')
-        //        {
-
-        //        }
-        //        else if (c == '|')
-        //        {
-        //            //leftRight = !leftRight;
-        //            int lastStateId = automaton.GetLastStateId();
-        //            automaton = ParseOr(automaton, lastStateId, transition, leftRight);
-
-        //            transition += 1;
-        //        }
-        //        else if (c == ',')
-        //        {
-        //            leftRight = true;
-        //            continue;
-        //        }
-        //        else
-        //            throw new Exception("Unknown character in expression: " + c);
-        //    }
-
-        //    return automaton;
-        //}
 
     }
 }

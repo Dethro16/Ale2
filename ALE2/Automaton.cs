@@ -16,9 +16,11 @@ namespace ALE2
         List<Transition> transitionList;
         public List<State> ConnectingStates = new List<State>();
 
+
         bool dfa;
         bool finite;
         List<Word> words = new List<Word>();
+        List<string> testWords = new List<string>();
 
         public List<State> currentStates = new List<State>();
 
@@ -56,6 +58,15 @@ namespace ALE2
         {
             get { return words; }
             set { words = value; }
+        }
+
+        /// <summary>
+        /// Contains all states
+        /// </summary>
+        public List<string> TestWords
+        {
+            get { return testWords; }
+            set { testWords = value; }
         }
 
         /// <summary>
@@ -153,6 +164,10 @@ namespace ALE2
             {
                 foreach (Transition transition in TransitionList)
                 {
+                    if (transition.TransitionChar != '_')
+                    {
+                        alphabet.Add(transition.TransitionChar.ToString());
+                    }
                     if (state.StringValue == transition.InitialState.StringValue)
                     {
                         state.OutTrans.Add(transition);
@@ -168,6 +183,13 @@ namespace ALE2
                 }
 
             }
+            var unique = new HashSet<string>(alphabet);
+            alphabet.Clear();
+            foreach (var s in unique)
+            {
+                alphabet.Add(s);
+            }
+
         }
 
         public void CheckForEmptyFinal()
@@ -194,7 +216,7 @@ namespace ALE2
 
             foreach (Transition transition in TransitionList)
             {
-                if (transition.EndState==null)
+                if (transition.EndState == null)
                 {
                     continue;
                 }
@@ -202,6 +224,8 @@ namespace ALE2
             }
 
         }
+
+
 
         public void AssignStates()
         {
@@ -227,7 +251,7 @@ namespace ALE2
             try
             {
                 var item = StateList.Max(x => x.Id);
-                return item+1;
+                return item + 1;
             }
             catch (Exception)
             {
@@ -312,15 +336,17 @@ namespace ALE2
         /// 
         /// </summary>
         /// <returns></returns>
-        public string CheckTestDFA()
+        public bool CheckTestDFA()
         {
             if (CheckDFA() == Dfa)
             {
-                return "DFA: " + Dfa + " V";
+                //return "DFA: " + Dfa + " V";
+                return true;
             }
             else
             {
-                return "DFA: " + Dfa + " X";
+                return false;
+                // return "DFA: " + Dfa + " X";
             }
         }
 
@@ -335,22 +361,28 @@ namespace ALE2
         public List<string> CheckTestWords()
         {
             List<string> checkedWords = new List<string>();
+            List<string> result = new List<string>();
             for (int i = 0; i < Words.Count; i++)
             {
                 bool temp = BFSTraversal(StateList[0], Words[i].StringValue);
                 ClearStates();
+                ClearTransitions();
+                checkedWords.Add("Word-" + i + ": " + Words[i].StringValue);
+
                 if (Words[i].Accepted == temp)
                 {
-                    checkedWords.Add("Word-" + i + ": " + Words[i].StringValue + " " + Words[i].Accepted + ": V");
+                    testWords.Add(Words[i].Accepted + ": V");
                 }
                 else
                 {
-                    checkedWords.Add("Word-" + i + ": " + Words[i].StringValue + " " + Words[i].Accepted + ": X");
+                    testWords.Add(Words[i].Accepted + ": X");
                 }
+
                 Words[i].IsAccepted = temp;
                 ClearTransitions();
             }
 
+            //testWords;
             return checkedWords;
         }
 
@@ -434,7 +466,7 @@ namespace ALE2
                                 tempState.CurrentTransitionIndex = index;
 
                                 item.HasTravelled = true;
-                               // item.EndState.CurrentTransitionIndex = index;
+                                // item.EndState.CurrentTransitionIndex = index;
                                 q.Enqueue(tempState);
                             }
                             if (input == "_" && state.IsFinal)
@@ -469,6 +501,80 @@ namespace ALE2
             }
             return false;
         }
+
+        private bool wordExist(string val)
+        {
+            foreach (Word word in Words)
+            {
+                if (val == word.StringValue)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        List<Transition> hasTravelled = new List<Transition>();
+        public bool CheckAllWords(State currState, string currWord)
+        {
+            List<string> temp = new List<string>();
+
+            foreach (Transition trans in currState.OutTrans)
+            {
+                if (hasTravelled.Contains(trans))
+                {
+                    // isfi
+                    return false;
+                }
+                if (trans.TransitionChar != '_')
+                {
+                    currWord += trans.TransitionChar;
+                }
+                trans.HasTravelled = true;
+                hasTravelled.Add(trans);
+                if (CheckAllWords(trans.EndState, currWord))
+                {
+                    if (currWord == "d")
+                    {
+
+                    }
+                    ClearStates();
+                    ClearTransitions();
+                    if (BFSTraversal(StateList[0], currWord) && (!wordExist(currWord)))
+                    {
+                        Words.Add(new Word(currWord, true));
+                        temp.Add(currWord);
+                        hasTravelled.Clear();
+                    }
+
+                }
+                else
+                {
+                    return false;
+                }
+
+
+
+            }
+
+            return true;
+        }
+
+        public bool CheckFinite()
+        {
+            foreach (State state in StateList)
+            {
+                foreach (Transition trans in state.OutTrans)
+                {
+                    if (trans.EndState == state)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
 
     }
 }
