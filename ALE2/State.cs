@@ -18,6 +18,16 @@ namespace ALE2
         int id;
         int transIndex = 0;
         int hasTravelled = 0;
+
+        List<State> possibleStates;
+
+        public List<State> PossibleStates
+        {
+            get { return possibleStates; }
+            set { possibleStates = value; }
+        }
+
+
         public int Id
         {
             get { return id; }
@@ -102,6 +112,7 @@ namespace ALE2
         {
             StringValue = stringValue;
             Id = id;
+            possibleStates = new List<State>();
         }
 
 

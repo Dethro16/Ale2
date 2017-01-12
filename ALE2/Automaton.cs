@@ -15,7 +15,7 @@ namespace ALE2
         List<string> alphabet;
         List<Transition> transitionList;
         public List<State> ConnectingStates = new List<State>();
-
+        List<State> possibleStateList = new List<State>();
 
         bool dfa;
         bool finite;
@@ -76,6 +76,15 @@ namespace ALE2
         {
             get { return stateList; }
             set { stateList = value; }
+        }
+
+        /// <summary>
+        /// Contains all states
+        /// </summary>
+        public List<State> PossibleStateList
+        {
+            get { return possibleStateList; }
+            set { possibleStateList = value; }
         }
 
         /// <summary>
@@ -575,6 +584,38 @@ namespace ALE2
             return true;
         }
 
+
+        public void SetStateTable(Automaton automata)
+        {
+            List<State> letterSpecific = new List<State>();
+            foreach (State state in automata.StateList)
+            {
+                foreach (string item in Alphabet)
+                {
+                    letterSpecific.AddRange(CanTravel(state, item));
+                    letterSpecific.Add(automata.possibleStateList.Last());
+                }
+
+                automata.possibleStateList.AddRange(letterSpecific);
+
+            }
+        }
+
+
+        private List<State> CanTravel(State state, string letter)
+        {
+            List<State> tempList = new List<State>();
+            foreach (Transition trans in state.OutTrans)
+            {
+                if (trans.TransitionChar.ToString() == letter || trans.TransitionChar == '_')
+                {
+                    state.PossibleStates.Add(trans.EndState);
+                    tempList.Add(trans.EndState);
+                }
+            }
+
+            return tempList;
+        }
 
     }
 }

@@ -91,6 +91,9 @@ namespace ALE2
                 rTBWords.AppendText("\n");
             }
 
+
+            automata.SetStateTable(automata);
+
         }
         /// <summary>
         /// Returns a list of strings with filenames
@@ -310,6 +313,11 @@ namespace ALE2
             pictureBox2.ImageLocation = AppDomain.CurrentDomain.BaseDirectory + "abc.png";
             //parser.ParseRegExToNode(tBRE.Text);
             //parser.ParseTest(tBRE.Text, new List<Automaton>());
+        }
+
+        private void btNFADFA_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

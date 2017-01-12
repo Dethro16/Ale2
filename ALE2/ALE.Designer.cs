@@ -57,6 +57,7 @@
             this.lbFinite = new System.Windows.Forms.Label();
             this.rTBWords = new System.Windows.Forms.RichTextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.btNFADFA = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -102,9 +103,9 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(12, 121);
+            this.pictureBox1.Location = new System.Drawing.Point(12, 148);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(487, 596);
+            this.pictureBox1.Size = new System.Drawing.Size(487, 569);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 6;
             this.pictureBox1.TabStop = false;
@@ -382,11 +383,25 @@
             this.label8.TabIndex = 36;
             this.label8.Text = "Words:";
             // 
+            // btNFADFA
+            // 
+            this.btNFADFA.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btNFADFA.Location = new System.Drawing.Point(283, 105);
+            this.btNFADFA.Name = "btNFADFA";
+            this.btNFADFA.Size = new System.Drawing.Size(94, 21);
+            this.btNFADFA.TabIndex = 37;
+            this.btNFADFA.Text = "NDFA to DFA";
+            this.btNFADFA.UseVisualStyleBackColor = true;
+            this.btNFADFA.Click += new System.EventHandler(this.btNFADFA_Click);
+            // 
             // ALE
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1350, 729);
+            this.Controls.Add(this.btNFADFA);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.rTBWords);
             this.Controls.Add(this.lbFinite);
@@ -457,6 +472,7 @@
         private System.Windows.Forms.Label lbFinite;
         private System.Windows.Forms.RichTextBox rTBWords;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button btNFADFA;
     }
 }
 
