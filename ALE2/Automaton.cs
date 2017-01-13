@@ -589,15 +589,21 @@ namespace ALE2
         {
             List<State> connectingStates = new List<State>();
 
-            foreach (Transition trans in state.OutTrans)
+            foreach (char item in state.StringValue)
             {
-                if (trans.TransitionChar.ToString() == letter)
+                foreach (Transition trans in FindState(item.ToString()).OutTrans)
                 {
-                    connectingStates.Add(trans.EndState);
+                    if (trans.TransitionChar.ToString() == letter)
+                    {
+                        connectingStates.Add(trans.EndState);
+                    }
                 }
+                
             }
 
-            return connectingStates;
+
+
+            return connectingStates.Distinct().ToList();
         }
 
         private bool stateExists(State s1, List<State> list)
@@ -612,58 +618,148 @@ namespace ALE2
             return false;
         }
 
+        private List<State> GetMatchingStates(State state, string character)
+        {
+            List<State> tempList = new List<State>();
+
+            foreach (char item in state.StringValue)
+            {
+                tempList.AddRange(CanTravel(FindState(item.ToString()), character));
+
+            }
+            return tempList.Distinct().ToList();
+        }
+
         public List<State> stateListDFA = new List<State>();
         public List<Transition> transitionListDFA = new List<Transition>();
 
         public void SetStateTable(Automaton automata)
         {
+            Automaton DFAAutomata = new Automaton(new List<State>(), automata.Alphabet, new List<Transition>());
             List<State> history = new List<State>();
             List<State> final = new List<State>();
-            List<State> currentStateList = new List<State>();
+            List<List<State>> currentStateList = new List<List<State>>();
+            currentStateList.Add(new List<State>());
+            currentStateList[0].Add(automata.StateList[0]);
+            State tempState1 = new State(automata.StateList[0].ToString());
+            DFAAutomata.StateList.Add(tempState1);
 
-            currentStateList.Add(automata.StateList[0]);
             //List<List<State>> history = new List<List<State>>();
-            
 
             while (currentStateList.Count != 0)
             {
-                State currentState = currentStateList[0];
-                currentStateList.Remove(currentState);
-
-                State tempState = new State(currentState.StringValue);
-
-                foreach (string letter in automata.alphabet)
+                List<State> _currentStateList = currentStateList[0];
+                currentStateList.Remove(_currentStateList);
+                //Now get possible state
+                List<State> possibleStateList = new List<State>();
+                
+                foreach (State _state in _currentStateList)//This needs to only be 1 state so that the output is always 2 states instead of multiple, over time will have huge output
                 {
-                    string dfaState = "";
+                    foreach (string letter in Alphabet)
+                    {
+                        string tempStateVal = "";
+                        foreach (State item in GetConnectingStates(_state, letter))
+                        {
+                            tempStateVal += item.StringValue;
+                        }
+
+                        possibleStateList.Add(new State(tempStateVal));
+
+
+                    }
+
+
                     
-                    foreach (State _state in CanTravel(currentState, letter))
-                    {
-                        dfaState += _state.StringValue;
-                    }
+                }
 
-                    State tempNewState = new State(dfaState);
-                    Transition trans = new Transition(tempState, tempNewState, letter[0]);
-                    //tempNewState.OutTrans.Add(new Transition(currentState, tempNewState, letter[0]));
-                    if (!stateExists(tempState, history))
+                for (int i = 0; i < alphabet.Count; i++)
+                {
+                    if (possibleStateList[i].StringValue == "")
                     {
-
-                        history.Add(tempState);
+                        possibleStateList[i].IsFinal = true;
+                        continue;
                     }
+                    Transition trans = new Transition(DFAAutomata.StateList.Last(), possibleStateList[i], alphabet[i][0]);
+                    DFAAutomata.TransitionList.Add(trans);
+                }
 
-                    if (!stateExists(tempNewState, history))
+                //Now check whether this was added to history before
+                List<State> newTempList = new List<State>();
+                foreach (var item in possibleStateList)
+                {
+                    if (history.Contains(item))
                     {
-                        
-                        currentStateList.Add(tempNewState);
-                        final.Add(tempState);
-                        transitionListDFA.Add(trans);
+                        continue;
                     }
+                    DFAAutomata.StateList.Add(item);
+                    DFAAutomata.AssignStates();
+                    DFAAutomata.AssignTransitions();
+                    history.Add(_currentStateList[0]);
+                    newTempList.Add(item);
+
 
                 }
 
-                history.Add(tempState);
+                currentStateList.Add(newTempList);
 
 
             }
+
+
+
+
+            //while (currentStateList.Count != 0)
+            //{
+            //    List<State> currentStatetempList = currentStateList[0];
+            //    currentStateList.Remove(currentStatetempList);
+            //    State currentState = new State("");
+            //    State tempState = new State(currentState.StringValue);
+            //    List<State> tempStateList = new List<State>();
+            //    foreach (State tempListItem in currentStatetempList)
+            //    {
+            //        foreach (string letter in automata.alphabet)
+            //        {
+            //            string dfaState = "";
+
+            //            foreach (State _state in GetMatchingStates(tempListItem, letter))
+            //            {
+            //                dfaState += _state.StringValue;
+            //            }
+
+            //            //foreach (State __state in CanTravel(tempListItem, letter))
+            //            //{
+                            
+            //            //}
+
+            //            State tempNewState = new State(dfaState);
+            //            tempState.StringValue = tempListItem.StringValue;
+            //            Transition trans = new Transition(tempState, tempNewState, letter[0]);
+
+            //            //tempNewState.OutTrans.Add(new Transition(currentState, tempNewState, letter[0]));
+            //            if (!stateExists(tempState, history))
+            //            {
+
+            //                history.Add(tempState);
+            //            }
+
+            //            if (!stateExists(tempNewState, history))
+            //            {
+            //                tempStateList.Add(tempNewState);
+            //               // currentStateList.Add(tempNewState);
+            //                final.Add(tempState);
+            //                transitionListDFA.Add(trans);
+            //            }
+
+            //        }
+
+            //    }
+
+
+            //    //At end must add all states together as 1 state + all transitions
+            //    history.Add(tempState);
+
+
+            //}
 
 
 
