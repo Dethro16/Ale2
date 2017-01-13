@@ -58,9 +58,11 @@
             this.rTBWords = new System.Windows.Forms.RichTextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.btNFADFA = new System.Windows.Forms.Button();
+            this.pBDFA = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pBDFA)).BeginInit();
             this.SuspendLayout();
             // 
             // cBFiles
@@ -105,7 +107,7 @@
             // 
             this.pictureBox1.Location = new System.Drawing.Point(12, 148);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(487, 569);
+            this.pictureBox1.Size = new System.Drawing.Size(487, 295);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 6;
             this.pictureBox1.TabStop = false;
@@ -396,11 +398,21 @@
             this.btNFADFA.UseVisualStyleBackColor = true;
             this.btNFADFA.Click += new System.EventHandler(this.btNFADFA_Click);
             // 
+            // pBDFA
+            // 
+            this.pBDFA.Location = new System.Drawing.Point(12, 449);
+            this.pBDFA.Name = "pBDFA";
+            this.pBDFA.Size = new System.Drawing.Size(487, 268);
+            this.pBDFA.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pBDFA.TabIndex = 38;
+            this.pBDFA.TabStop = false;
+            // 
             // ALE
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1350, 729);
+            this.Controls.Add(this.pBDFA);
             this.Controls.Add(this.btNFADFA);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.rTBWords);
@@ -436,6 +448,7 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pBDFA)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -473,6 +486,7 @@
         private System.Windows.Forms.RichTextBox rTBWords;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btNFADFA;
+        private System.Windows.Forms.PictureBox pBDFA;
     }
 }
 

@@ -79,20 +79,35 @@ namespace ALE2
                 lbFinite.Text = "False";
                 lbFinite.BackColor = Color.Red;
             }
-            
-            
+
+
             rTBWords.AppendText("All words:\n");
             foreach (Word word in automata.Words)
             {
 
-                rTBWords.AppendText("Word: "+word.StringValue);
+                rTBWords.AppendText("Word: " + word.StringValue);
                 rTBWords.AppendText("\n");
                 rTBWords.AppendText("Accepted: " + word.Accepted);
                 rTBWords.AppendText("\n");
             }
 
 
+
+
+
             automata.SetStateTable(automata);
+            List<State> temp = automata.stateListDFA.Distinct().ToList();
+
+            automata.StateList = temp;
+            automata.AssignTransitions();
+            automata.AssignGraphViz();
+
+
+            parser.GeneratePicture(automata.StateList, automata.TransitionList, "Dfa.png");
+
+            pBDFA.ImageLocation = AppDomain.CurrentDomain.BaseDirectory + "Dfa.png";
+
+
 
         }
         /// <summary>

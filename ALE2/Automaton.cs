@@ -585,22 +585,208 @@ namespace ALE2
         }
 
 
-        public void SetStateTable(Automaton automata)
+        private List<State> GetConnectingStates(State state, string letter)
         {
-            List<State> letterSpecific = new List<State>();
-            foreach (State state in automata.StateList)
+            List<State> connectingStates = new List<State>();
+
+            foreach (Transition trans in state.OutTrans)
             {
-                foreach (string item in Alphabet)
+                if (trans.TransitionChar.ToString() == letter)
                 {
-                    letterSpecific.AddRange(CanTravel(state, item));
-                    letterSpecific.Add(automata.possibleStateList.Last());
+                    connectingStates.Add(trans.EndState);
                 }
-
-                automata.possibleStateList.AddRange(letterSpecific);
-
             }
+
+            return connectingStates;
         }
 
+        private bool stateExists(State s1, List<State> list)
+        {
+            foreach (var item in list)
+            {
+                if (s1.StringValue == item.StringValue)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public List<State> stateListDFA = new List<State>();
+        public List<Transition> transitionListDFA = new List<Transition>();
+
+        public void SetStateTable(Automaton automata)
+        {
+            List<State> history = new List<State>();
+            List<State> final = new List<State>();
+            List<State> currentStateList = new List<State>();
+
+            currentStateList.Add(automata.StateList[0]);
+            //List<List<State>> history = new List<List<State>>();
+            
+
+            while (currentStateList.Count != 0)
+            {
+                State currentState = currentStateList[0];
+                currentStateList.Remove(currentState);
+
+                State tempState = new State(currentState.StringValue);
+
+                foreach (string letter in automata.alphabet)
+                {
+                    string dfaState = "";
+                    
+                    foreach (State _state in CanTravel(currentState, letter))
+                    {
+                        dfaState += _state.StringValue;
+                    }
+
+                    State tempNewState = new State(dfaState);
+                    Transition trans = new Transition(tempState, tempNewState, letter[0]);
+                    //tempNewState.OutTrans.Add(new Transition(currentState, tempNewState, letter[0]));
+                    if (!stateExists(tempState, history))
+                    {
+
+                        history.Add(tempState);
+                    }
+
+                    if (!stateExists(tempNewState, history))
+                    {
+                        
+                        currentStateList.Add(tempNewState);
+                        final.Add(tempState);
+                        transitionListDFA.Add(trans);
+                    }
+
+                }
+
+                history.Add(tempState);
+
+
+            }
+
+
+
+
+
+
+
+            //List<List<State>> history = new List<List<State>>();
+            //List<List<State>> PossibleStateList = new List<List<State>>();
+            //List<List<State>> CurrentStateList = new List<List<State>>();
+
+            //List<State> currentState = new List<State>();
+            //currentState.Add(automata.StateList[0]);
+            //CurrentStateList.Add(currentState);
+
+
+            //while (CurrentStateList.Count != 0)
+            //{
+            //    List<State> tempStateList = new List<State>();
+            //    tempStateList = CurrentStateList.First();
+            //    CurrentStateList.RemoveAt(0);
+
+            //    if (ContainsList(tempStateList, history))
+            //    {
+            //        continue;
+            //    }
+
+            //    List<List<State>> wouldBeAdded = new List<List<State>>();
+            //    foreach (State state in tempStateList)
+            //    {
+
+            //        foreach (string letter in alphabet)
+            //        {
+            //            List<State> _temp = GetConnectingStates(state, letter);
+            //            bool listExists = false;
+            //            foreach (List<State> list in history)
+            //            {
+            //                if (ContainsAllItems(list, _temp))
+            //                {
+            //                    listExists = true;
+            //                }
+            //            }
+
+            //            if (!listExists)
+            //            {
+            //                wouldBeAdded.Add(_temp);
+            //                CurrentStateList.Add(_temp);
+            //            }
+
+
+
+            //            string DfaStateString = "";
+
+            //            foreach (State s in tempStateList)
+            //            {
+            //                DfaStateString += s.StringValue;
+            //            }
+
+            //            State DfaState = new State(DfaStateString);
+            //            stateListDFA.Add(DfaState);
+            //            List<State> beforeadding = new List<State>();
+            //            foreach (var item in CombineStates(wouldBeAdded))
+            //            {
+            //                //stateListDFA.Add(tempState);
+            //                beforeadding.Add(DfaState);
+            //                //tempState.OutTrans.Add();
+            //            }
+
+            //            foreach (var item in beforeadding)
+            //            {
+            //                DfaState.OutTrans.Add(new Transition(DfaState, item, letter[0]));
+            //                stateListDFA.Add(item);
+            //            }
+
+
+            //        }
+
+
+            //    }
+
+            //    history.Add(tempStateList);
+
+            //}
+            stateListDFA = final;
+
+        }
+
+
+        private List<State> CombineStates(List<List<State>> temp)
+        {
+            List<State> combinedStates = new List<State>();
+            foreach (List<State> item in temp)
+            {
+                string tempState = "";
+                foreach (State s in item)
+                {
+                    tempState += s.StringValue;
+                }
+                combinedStates.Add(new State(tempState));
+            }
+
+            return combinedStates;
+        }
+
+        private bool ContainsList(List<State> checkFor, List<List<State>> checkAgainst)
+        {
+            foreach (List<State> tempList in checkAgainst)
+            {
+                var a = new HashSet<State>(tempList).SetEquals(checkFor);
+                if (a)
+                {
+                    return true;
+                }
+
+
+            }
+            return false;
+        }
+
+        public static bool ContainsAllItems(List<State> a, List<State> b)
+        {
+            return !b.Except(a).Any();
+        }
 
         private List<State> CanTravel(State state, string letter)
         {

@@ -1,0 +1,16 @@
+alphabet: ab
+states: A,B,C,D,E
+final: E
+transitions:
+A,a --> A
+A,a --> B
+A,a --> C
+A,a --> D
+A,a --> E
+A,b --> D
+A,b --> E
+B,a --> C
+B,b --> E
+C,b --> B
+D,a --> E
+end.

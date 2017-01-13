@@ -258,8 +258,12 @@ namespace ALE2
         /// Creates the picture
         /// </summary>
         /// <returns></returns>
-        public void GeneratePicture(List<State> StateList, List<Transition> TransitionList)
+        public void GeneratePicture(List<State> StateList, List<Transition> TransitionList, string fileName = "")
         {
+            if (fileName == "")
+            {
+                fileName = "abc.png";
+            }
             string code = "digraph myAutomaton {\nrankdir = LR;\n\"" + "\" [shape = none]";
             int stateCount = 0;
 
@@ -293,7 +297,7 @@ namespace ALE2
             processInfo.WorkingDirectory = Path.GetDirectoryName(saveLocation);
             processInfo.FileName = saveLocation + "\\dot.exe";
             // Console.Write(AppDomain.CurrentDomain.BaseDirectory);
-            processInfo.Arguments = "-Tpng -o" + AppDomain.CurrentDomain.BaseDirectory + "abc.png " + file;
+            processInfo.Arguments = "-Tpng -o" + AppDomain.CurrentDomain.BaseDirectory + fileName + " " + file;
             processInfo.ErrorDialog = true;
             processInfo.UseShellExecute = false;
             processInfo.RedirectStandardOutput = true;
