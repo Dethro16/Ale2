@@ -94,16 +94,15 @@ namespace ALE2
 
 
 
+            Automaton automataDFA = automata.SetStateTable(automata);
+            //List<State> temp = automata.stateListDFA
+            automataDFA.StateList = automataDFA.StateList.Distinct().ToList();
+            // automata.StateList = temp;
+            //automataDFA.AssignTransitions();
+            automataDFA.AssignGraphViz();
 
-            automata.SetStateTable(automata);
-            List<State> temp = automata.stateListDFA.Distinct().ToList();
 
-            automata.StateList = temp;
-            automata.AssignTransitions();
-            automata.AssignGraphViz();
-
-
-            parser.GeneratePicture(automata.StateList, automata.TransitionList, "Dfa.png");
+            parser.GeneratePicture(automataDFA.StateList, automataDFA.TransitionList, "Dfa.png");
 
             pBDFA.ImageLocation = AppDomain.CurrentDomain.BaseDirectory + "Dfa.png";
 

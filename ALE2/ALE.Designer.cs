@@ -107,7 +107,7 @@
             // 
             this.pictureBox1.Location = new System.Drawing.Point(12, 148);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(487, 295);
+            this.pictureBox1.Size = new System.Drawing.Size(487, 188);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 6;
             this.pictureBox1.TabStop = false;
@@ -400,9 +400,9 @@
             // 
             // pBDFA
             // 
-            this.pBDFA.Location = new System.Drawing.Point(12, 449);
+            this.pBDFA.Location = new System.Drawing.Point(12, 342);
             this.pBDFA.Name = "pBDFA";
-            this.pBDFA.Size = new System.Drawing.Size(487, 268);
+            this.pBDFA.Size = new System.Drawing.Size(487, 375);
             this.pBDFA.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pBDFA.TabIndex = 38;
             this.pBDFA.TabStop = false;

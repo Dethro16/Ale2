@@ -110,6 +110,10 @@ namespace ALE2
 
         public State(string stringValue, int id = 0)
         {
+            if (stringValue == "C")
+            {
+
+            }
             StringValue = stringValue;
             Id = id;
             possibleStates = new List<State>();

@@ -598,7 +598,7 @@ namespace ALE2
                         connectingStates.Add(trans.EndState);
                     }
                 }
-                
+
             }
 
 
@@ -633,55 +633,83 @@ namespace ALE2
         public List<State> stateListDFA = new List<State>();
         public List<Transition> transitionListDFA = new List<Transition>();
 
-        public void SetStateTable(Automaton automata)
+        public Automaton SetStateTable(Automaton automata)
         {
             Automaton DFAAutomata = new Automaton(new List<State>(), automata.Alphabet, new List<Transition>());
+
             List<State> history = new List<State>();
             List<State> final = new List<State>();
-            List<List<State>> currentStateList = new List<List<State>>();
-            currentStateList.Add(new List<State>());
-            currentStateList[0].Add(automata.StateList[0]);
-            State tempState1 = new State(automata.StateList[0].ToString());
-            DFAAutomata.StateList.Add(tempState1);
+
+            List<State> currentStateList = new List<State>();
+            State newState = new State(automata.StateList[0].StringValue);
+            currentStateList.Add(newState);
+            DFAAutomata.StateList.Add(newState);
+            //currentStateList.Add(new List<State>());
+            // currentStateList.Add(automata.StateList[0]);
+            // State tempState1 = new State(automata.StateList[0].StringValue);
+            // DFAAutomata.StateList.Add(tempState1);
 
             //List<List<State>> history = new List<List<State>>();
 
             while (currentStateList.Count != 0)
             {
-                List<State> _currentStateList = currentStateList[0];
-                currentStateList.Remove(_currentStateList);
+                State currentState = currentStateList[0];
+                //List<State> _currentStateList = currentStateList;
+                currentStateList.Remove(currentStateList[0]);
                 //Now get possible state
                 List<State> possibleStateList = new List<State>();
-                
-                foreach (State _state in _currentStateList)//This needs to only be 1 state so that the output is always 2 states instead of multiple, over time will have huge output
+
+                if (stateExists(currentState, history))
                 {
-                    foreach (string letter in Alphabet)
-                    {
-                        string tempStateVal = "";
-                        foreach (State item in GetConnectingStates(_state, letter))
-                        {
-                            tempStateVal += item.StringValue;
-                        }
-
-                        possibleStateList.Add(new State(tempStateVal));
-
-
-                    }
-
-
-                    
+                    //currentState.Add(currentStateList[0]);
+                    //currentStateList.Add()
+                    continue;
                 }
 
+                //  foreach (State _state in _currentStateList)//This needs to only be 1 state so that the output is always 2 states instead of multiple, over time will have huge output
+                //{
+                foreach (string letter in Alphabet)
+                {
+                    string tempStateVal = "";
+                    foreach (State item in GetConnectingStates(currentState, letter))
+                    {
+                        tempStateVal += item.StringValue;
+                    }
+
+                    possibleStateList.Add(new State(tempStateVal));
+
+
+                }
+
+
+
+                //  }
+
+                int finalCount = 0;
                 for (int i = 0; i < alphabet.Count; i++)
                 {
                     if (possibleStateList[i].StringValue == "")
                     {
-                        possibleStateList[i].IsFinal = true;
+                        finalCount++;
+                        //currentState.IsFinal = true;
+                        //Transition transFinal
                         continue;
                     }
-                    Transition trans = new Transition(DFAAutomata.StateList.Last(), possibleStateList[i], alphabet[i][0]);
+                    Transition trans = new Transition(currentState, possibleStateList[i], alphabet[i][0]);
                     DFAAutomata.TransitionList.Add(trans);
+
+                    //Transition trans = new Transition(currentState, possibleStateList[i], alphabet[i][0]);
+                    //DFAAutomata.TransitionList.Add(trans);
+
+
                 }
+
+                if (finalCount == automata.alphabet.Count)
+                {
+                    currentState.IsFinal = true;
+                }
+
+
 
                 //Now check whether this was added to history before
                 List<State> newTempList = new List<State>();
@@ -692,15 +720,16 @@ namespace ALE2
                         continue;
                     }
                     DFAAutomata.StateList.Add(item);
-                    DFAAutomata.AssignStates();
-                    DFAAutomata.AssignTransitions();
-                    history.Add(_currentStateList[0]);
+                    
+
                     newTempList.Add(item);
 
 
                 }
-
-                currentStateList.Add(newTempList);
+                //DFAAutomata.AssignTransitions();
+                //DFAAutomata.AssignStates();
+                history.Add(currentState);
+                currentStateList.AddRange(newTempList);
 
 
             }
@@ -728,7 +757,7 @@ namespace ALE2
 
             //            //foreach (State __state in CanTravel(tempListItem, letter))
             //            //{
-                            
+
             //            //}
 
             //            State tempNewState = new State(dfaState);
@@ -843,8 +872,31 @@ namespace ALE2
             //    history.Add(tempStateList);
 
             //}
-            stateListDFA = final;
+            //stateListDFA = final;
 
+
+
+            DFAAutomata.AssignTransitions();
+            DFAAutomata.AssignStates();
+            //Now have to classify all finalstates
+            string stateFinal = "";
+
+            foreach (State item in DFAAutomata.StateList)
+            {
+                if (item.IsFinal)
+                {
+                    stateFinal = item.StringValue;
+                }
+            }
+
+            foreach (State item in DFAAutomata.StateList)
+            {
+                if (item.StringValue.Contains(stateFinal))
+                {
+                    item.IsFinal = true;
+                }
+            }
+            return DFAAutomata;
         }
 
 
