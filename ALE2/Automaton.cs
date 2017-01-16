@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace ALE2
 {
     class Automaton
@@ -202,11 +197,6 @@ namespace ALE2
 
         }
 
-        public void CheckForEmptyFinal()
-        {
-
-        }
-
         /// <summary>
         /// Assigns all graphviz values
         /// </summary>
@@ -241,7 +231,6 @@ namespace ALE2
             }
 
         }
-
 
 
         public void AssignStates()
@@ -283,10 +272,6 @@ namespace ALE2
         {
             List<State> tempStates = ConnectingStates.Where(p => p.TransIndex == transitionIndex).ToList();
 
-            //tempStates = tempStates.Where(p => tempStates.Any(l => p.TransIndex == transitionIndex)).ToList();
-
-            //tempStates = tempStates.Where(e => transitionIndex);
-
             foreach (State state in tempStates)
             {
                 if (state.TransIndex == transitionIndex)
@@ -305,19 +290,6 @@ namespace ALE2
                         return state;
                     }
                 }
-            }
-            return null;
-        }
-
-        public State GetFinalStateByIndex(int i)
-        {
-            switch (i)
-            {
-                case 0:
-                case 1:
-                case 2:
-                default:
-                    break;
             }
             return null;
         }
@@ -625,19 +597,6 @@ namespace ALE2
             return false;
         }
 
-        private List<State> GetMatchingStates(State state, string character)
-        {
-            List<State> tempList = new List<State>();
-
-            foreach (char item in state.StringValue)
-            {
-                tempList.AddRange(CanTravel(FindState(item.ToString()), character));
-
-            }
-            return tempList.Distinct().ToList();
-        }
-
-
         public void CleanDuplicates()
         {
             List<State> tempStateList = new List<State>();
@@ -763,37 +722,6 @@ namespace ALE2
             return DFAAutomata;
         }
 
-        private List<State> CombineStates(List<List<State>> temp)
-        {
-            List<State> combinedStates = new List<State>();
-            foreach (List<State> item in temp)
-            {
-                string tempState = "";
-                foreach (State s in item)
-                {
-                    tempState += s.StringValue;
-                }
-                combinedStates.Add(new State(tempState));
-            }
-
-            return combinedStates;
-        }
-
-        private bool ContainsList(List<State> checkFor, List<List<State>> checkAgainst)
-        {
-            foreach (List<State> tempList in checkAgainst)
-            {
-                var a = new HashSet<State>(tempList).SetEquals(checkFor);
-                if (a)
-                {
-                    return true;
-                }
-
-
-            }
-            return false;
-        }
-
         public static bool ContainsAllItems(List<State> a, List<State> b)
         {
             return !b.Except(a).Any();
@@ -813,30 +741,6 @@ namespace ALE2
 
             return tempList;
         }
-
-        private bool CanReachFinal(State state, string input, int inputIndex)
-        {
-            char c = input[inputIndex];
-            foreach (Transition trans in state.OutTrans)
-            {
-                if (trans.TransitionChar == c)
-                {
-                    if (BFSTraversal(state, input))
-                    {
-                        return true;
-                    }
-                }
-                else if (trans.TransitionChar == '_')
-                {
-                    if (BFSTraversal(state, input))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
 
         public bool PDATraversal(State state, string input = "_")
         {

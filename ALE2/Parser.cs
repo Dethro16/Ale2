@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ALE2
 {
@@ -226,9 +225,6 @@ namespace ALE2
                 count++;
             }
 
-            //automata.AssignTransitions();
-            //automata.AssignGraphViz();
-
             return automata;
         }
 
@@ -297,35 +293,6 @@ namespace ALE2
                     //tempTrans.pdaValue = info[0] + "[" + info[2] + "," + info[3] + "]";
                     temp.Add(tempTrans);
                 }
-
-                //else
-                //{
-                //    Transition tempTrans = new Transition(automaton.FindState(info[0]), automaton.FindState(info[2]), '_');
-                //    temp.Add(tempTrans);
-                //}
-                //if (info[1] == "_")//epsilon trans
-                //{
-                //    Transition tempTrans = new Transition(automaton.FindState(info[0]), automaton.FindState(info[2]), '_');
-                //    tempTrans.pushToStack = "_";
-                //    tempTrans.removeFromStack = "_";
-                //    temp.Add(tempTrans);
-                //}
-                //else if (info.Count < 4)
-                //{
-                //    Transition tempTrans = new Transition(automaton.FindState(info[0]), automaton.FindState(info[2]), info[1][0]);
-                //    tempTrans.removeFromStack = "_";
-                //    tempTrans.pushToStack = "_";
-                //    //tempTrans.pdaValue = info[0] + "[" + info[2] + "," + info[3] + "]";
-                //    temp.Add(tempTrans);
-                //}
-                //else
-                //{
-                //    Transition tempTrans = new Transition(automaton.FindState(info[0]), automaton.FindState(info[4]), info[1][0]);
-                //    tempTrans.removeFromStack = info[2];
-                //    tempTrans.pushToStack = info[3];
-                //    tempTrans.pdaValue = info[1] + "[" + info[2] + "," + info[3] + "]";
-                //    temp.Add(tempTrans);
-                //}
 
             }
 
@@ -496,224 +463,17 @@ namespace ALE2
             proc.WaitForExit();
         }
 
-        private Automaton ParseLetter(Automaton automaton, char c, int stateIndex, int transIndex)
-        {
-            if (automaton.ConnectingStates.Count == 0)
-            {
-                return automaton;
-            }
-            automaton.Alphabet.Add(c.ToString());
-
-            State s1 = automaton.GetStateByParam(transIndex, false); //gets null here need to check that out because transindex aka transition is 2 instead of 1 but those should be two in the fgirst place
-            State s2 = automaton.GetStateByParam(transIndex, true);
-            if (s1 == null || s2 == null)
-            {
-                return automaton;
-            }
-
-            s1.IsFinal = false;
-            Transition trans = new Transition(s1, s2, c);
-
-            trans.InitialState.OutTrans.Add(trans);
-            trans.EndState.InTrans.Add(trans);
-
-            automaton.ConnectingStates.Remove(s1);
-            automaton.ConnectingStates.Remove(s2);
-
-            automaton.TransitionList.Add(trans);
-
-            return automaton;
-        }
-        private Automaton ParseOr(Automaton automaton, int stateIndex, int transIndex, bool leftRight)
-        {
-            List<State> tempStateList = new List<State>();
-
-            if (transIndex == 0)
-            {
-
-                for (int i = stateIndex; i < stateIndex + 6; i++)
-                {
-                    /*
-                        0 = init = 0
-                        1 = left = 1
-                        2 = right = 1
-                        3 = left = 1
-                        4 = right = 1
-                        5 = final = 0
-                    */
-                    State tempState = new State(i.ToString(), i);
-                    tempStateList.Add(tempState);
-                    if (tempStateList.Count == 1 || tempStateList.Count == 4 || tempStateList.Count == 5)
-                    {
-                        tempStateList.Last().IsStart = true;
-
-                    }
-                    else
-                    {
-                        tempStateList.Last().IsFinal = true;
-                    }
-
-                    if (tempStateList.Count == 2 || tempStateList.Count == 3 || tempStateList.Count == 4 || tempStateList.Count == 5)
-                    {
-                        tempStateList.Last().TransIndex = transIndex + 1;
-                    }
-                    else
-                    {
-                        tempStateList.Last().TransIndex = transIndex;
-                    }
-
-                }
-
-                automaton.StateList.AddRange(tempStateList);
-                automaton.TransitionList.Add(new Transition(tempStateList[0], tempStateList[1], '_'));
-                automaton.ConnectingStates.Add(tempStateList[1]);
-                automaton.TransitionList.Add(new Transition(tempStateList[0], tempStateList[2], '_'));
-                automaton.ConnectingStates.Add(tempStateList[2]);
-                automaton.TransitionList.Add(new Transition(tempStateList[3], tempStateList[5], '_'));
-                automaton.ConnectingStates.Add(tempStateList[3]);
-                automaton.TransitionList.Add(new Transition(tempStateList[4], tempStateList[5], '_'));
-                automaton.ConnectingStates.Add(tempStateList[4]);
-
-            }
-            else
-            {
-                for (int i = stateIndex + 1; i < stateIndex + 5; i++)
-                {
-                    State tempState = new State(i.ToString(), i);
-                    tempStateList.Add(tempState);
-
-                    //tempStateList.Last().IsFinal = true;
-
-                    if (tempStateList.Count == 1 || tempStateList.Count == 2)
-                    {
-                        tempStateList.Last().IsFinal = true;
-
-                    }
-                    else
-                    {
-                        tempStateList.Last().IsStart = true;
-                    }
-
-                    tempStateList.Last().TransIndex = transIndex + 1;
-                }
-
-                if (automaton.ConnectingStates.Count == 0)
-                {
-                    return automaton;
-                }
-
-                int xyz = 0;
-
-                if (leftRight)
-                {
-                    xyz = 1;
-                }
-                else
-                {
-                    xyz = 2;
-                }
-
-                automaton.StateList.AddRange(tempStateList);
-                automaton.ConnectingStates[0].IsFinal = false;
-                automaton.TransitionList.Add(new Transition(automaton.ConnectingStates[0], tempStateList[0], '_'));
-                //automaton.ConnectingStates.Add(tempStateList[0]);
-
-                automaton.TransitionList.Add(new Transition(automaton.ConnectingStates[0], tempStateList[1], '_'));
-                //automaton.ConnectingStates.Add(tempStateList[1]);
-
-
-
-                automaton.TransitionList.Add(new Transition(tempStateList[2], automaton.ConnectingStates[xyz], '_'));
-                // automaton.ConnectingStates.Add(tempStateList[2]);
-
-                automaton.TransitionList.Add(new Transition(tempStateList[3], automaton.ConnectingStates[xyz], '_'));
-                //automaton.ConnectingStates.Add(tempStateList[3]);
-
-                if (leftRight)
-                {
-                    automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
-                    automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
-                }
-                else
-                {
-                    automaton.ConnectingStates.Remove(automaton.ConnectingStates[2]);
-                    automaton.ConnectingStates.Remove(automaton.ConnectingStates[0]);
-                }
-
-                automaton.ConnectingStates.AddRange(tempStateList);
-
-
-
-            }
-
-            return automaton;
-        }
-
-        private string GetString(string expression, int index)
-        {
-            var aStringBuilder = new StringBuilder(expression);
-            aStringBuilder.Remove(0, index);
-            expression = aStringBuilder.ToString();
-            return expression;
-        }
-
-        static int GetMatchingBracket(string input)
-        {
-            int output = 0;
-            Stack<int> openingBraces = new Stack<int>();
-
-            for (int i = 0; i < input.Length; i++)
-            {
-                if (input[i] == '(')
-                {
-                    openingBraces.Push(i);
-                }
-                else if (input[i] == ')')
-                {
-                    if (openingBraces.Count == 1)
-                    {
-                        return i;
-                    }
-                    else
-                    {
-                        openingBraces.Pop();
-                    }
-                }
-            }
-
-            return output;
-        }
 
         private Automaton AddSubAutomata(Automaton original, Automaton subAutomata, State initial, State End)
         {
             if (subAutomata.TransitionList.Count == 1)
             {
-                //subAutomata.TransitionList.Last().InitialState = original.StateList[0];
-                //subAutomata.TransitionList.Last().EndState = original.StateList[1];
                 original.TransitionList.Add(subAutomata.TransitionList.Last());
             }
             else//Multiple ones
             {
-
-                //int lastId = original.GetLastStateId();
-
-                //foreach (State item in subAutomata.StateList)
-                //{
-
-                //}
-
-                //foreach (var item in subAutomata.StateList)
-                //{
-                //    lastId += 1;
-                //    item.Id = lastId;
-                //    item.StringValue = lastId.ToString();
-                //}
-
-
                 original.StateList.AddRange(subAutomata.StateList);
                 original.TransitionList.AddRange(subAutomata.TransitionList);
-
-                //original.TransitionList.Add(subAutomata.TransitionList.First());
             }
 
 
@@ -725,12 +485,11 @@ namespace ALE2
         {
             Automaton subAutomaton = new Automaton(null, null, null);
             Automaton tempAutomata = new Automaton(new List<State>(), new List<string>(), new List<Transition>());
-            //State initial = new State(automata.GetLastStateId().ToString(), automata.GetLastStateId());
+
             if (initial == null)
             {
                 initial = new State(stateCount.ToString(), stateCount);
                 stateCount++;
-                //tempAutomata.StateList.Add(initial);
             }
 
 
@@ -840,7 +599,6 @@ namespace ALE2
                     tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, initial, middle);
 
                 }
-                // Automaton subAutomaton = new Automaton(null, null, null);
                 node.Children.RemoveAt(0);
                 if (final == null)
                 {
@@ -849,7 +607,6 @@ namespace ALE2
                     tempAutomata.StateList.Add(final);
 
                     subAutomaton = ParseTreeToAutomata(node.Children.First(), tempAutomata, middle, final);
-                    //tempAutomata = AddSubAutomata(tempAutomata, subAutomaton, middle, final);
 
                 }
                 else
