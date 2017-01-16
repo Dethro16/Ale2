@@ -14,7 +14,6 @@ namespace ALE2
         private string codeValue;
         private int nodeNumber;
         private string linkedNode;
-        private int logicVal = 0;
 
         public Token Token
         {

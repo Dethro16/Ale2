@@ -11,9 +11,12 @@ namespace ALE2
         State initialState;
         char transitionChar;
         State endState;
-
+        public string removeFromStack;
+        public string pushToStack;
+        public string pdaValue = "";
         string graphValue;
         bool hasTravelled = false;
+        public int currentPriority = 5;
 
         public int id;
         /// <summary>

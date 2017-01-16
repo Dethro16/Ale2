@@ -15,7 +15,8 @@ namespace ALE2
     {
         Parser parser = new Parser();
         Automaton automata;
-
+        Automaton automataDFA;
+        Automaton automataPDA;
         public ALE()
         {
             InitializeComponent();
@@ -90,23 +91,6 @@ namespace ALE2
                 rTBWords.AppendText("Accepted: " + word.Accepted);
                 rTBWords.AppendText("\n");
             }
-
-
-
-
-            Automaton automataDFA = automata.SetStateTable(automata);
-            //List<State> temp = automata.stateListDFA
-            automataDFA.StateList = automataDFA.StateList.Distinct().ToList();
-            // automata.StateList = temp;
-            //automataDFA.AssignTransitions();
-            automataDFA.AssignGraphViz();
-
-
-            parser.GeneratePicture(automataDFA.StateList, automataDFA.TransitionList, "Dfa.png");
-
-            pBDFA.ImageLocation = AppDomain.CurrentDomain.BaseDirectory + "Dfa.png";
-
-
 
         }
         /// <summary>
@@ -331,7 +315,51 @@ namespace ALE2
 
         private void btNFADFA_Click(object sender, EventArgs e)
         {
+            automataDFA = automata.SetStateTable(automata);
+            //List<State> temp = automata.stateListDFA
+            automataDFA.StateList = automataDFA.StateList.Distinct().ToList();
 
+            automataDFA.AssignTransitions();
+            automataDFA.AssignStates();
+            // automata.StateList = temp;
+            //automataDFA.AssignTransitions();
+
+            automataDFA.CleanDuplicates();
+            automataDFA.AssignGraphViz();
+
+
+            parser.GeneratePicture(automataDFA.StateList, automataDFA.TransitionList, "Dfa.png");
+
+            pBDFA.ImageLocation = AppDomain.CurrentDomain.BaseDirectory + "Dfa.png";
+        }
+
+        private void btREADPDA_Click(object sender, EventArgs e)
+        {
+            if (cBDirectory.Text == "" || cBFiles.Text == "")
+            {
+                MessageBox.Show("Select a directory and/or file!");
+                return;
+            }
+            automataPDA = parser.ParsePDA(cBDirectory.Text + "\\" + cBFiles.Text);
+            automataPDA.AssignTransitions();
+            automataPDA.AssignGraphViz();
+
+            rTBTestCase.Clear();
+            rTBTestResults.Clear();
+            rTBWords.Clear();
+
+            parser.GeneratePicture(automataPDA.StateList, automataPDA.TransitionList, "PDA.png");
+
+            pBDFA.ImageLocation = AppDomain.CurrentDomain.BaseDirectory + "PDA.png";
+            //lbDfa.Text = automata.CheckDFA().ToString();
+        }
+
+        private void btnParsePDA_Click(object sender, EventArgs e)
+        {
+            automataPDA.ClearTransitions();
+            automataPDA.currentStack = automataPDA.stack;
+
+            lbAccepted.Text = automataPDA.PDATraversal(automataPDA.StateList[0], tBString.Text).ToString();
         }
     }
 }

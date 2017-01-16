@@ -24,7 +24,116 @@ namespace ALE2
             set { strippedTokenList = value; }
         }
 
-        int currentId = 0;
+        public Automaton ParsePDA(string path)
+        {
+            List<State> stateList = new List<State>();
+            List<Transition> transList = new List<Transition>();
+            List<string> alphabet = new List<string>();
+
+            Automaton automata = new Automaton(stateList, alphabet, transList);
+
+            string[] lines = File.ReadAllLines(path);
+
+            int count = 0;
+            foreach (string line in lines)
+            {
+                Console.WriteLine("\t" + line);
+
+                if (CheckContains(line, "alphabet"))
+                {
+                    foreach (string item in StripValues(line, 1))
+                    {
+                        foreach (char val in item)
+                        {
+                            alphabet.Add(val.ToString());
+                        }
+                    }
+                    automata.Alphabet = alphabet;
+                }
+                else if (CheckContains(line, "stack"))
+                {
+                    foreach (var item in StripValues(line, 5))
+                    {
+                        if (item == "stack" || item == ",")
+                        {
+
+                        }
+                        else
+                        {
+                            automata.stack += item;
+                        }
+                    }
+
+                    //xyz.Replace("  ", string.empty);
+                    automata.stack = automata.stack.Trim();
+
+
+                }
+                else if (CheckContains(line, "state"))
+                {
+                    foreach (var item in StripValues(line, 2))
+                    {
+                        stateList.Add(new State(item));
+                    }
+                    automata.StateList = stateList;
+                }
+                else if (CheckContains(line, "final"))
+                {
+                    List<string> temp = StripValues(line, 3)[0].Split(',').ToList();
+
+
+                    foreach (var item in temp)
+                    {
+                        // item = item.TrimEnd();
+                        automata.FindState(item).IsFinal = true;
+                    }
+                }
+                else if (CheckContains(line, "transition") && !CheckContains(line, "#"))
+                {
+                    List<string> temp = lines.Skip(count + 1).ToList();
+                    automata.TransitionList = ParseTransitionsPDA(temp, automata);
+                }
+                else if (line == "end.")
+                {
+                    //Finished with transitions
+                }
+                else if (CheckContains(line, "dfa:"))
+                {
+                    if (StripValues(line, 5)[1] == "y")
+                    {
+                        automata.Dfa = true;
+                    }
+                    else
+                    {
+                        automata.Dfa = false;
+                    }
+
+                }
+                else if (CheckContains(line, "finite:"))
+                {
+                    if (StripValues(line, 5)[1] == "y")
+                    {
+                        automata.Finite = true;
+                    }
+                    else
+                    {
+                        automata.Finite = false;
+                    }
+                }
+                else if (CheckContains(line, "words:"))
+                {
+                    List<string> temp = lines.Skip(count + 1).ToList();
+                    automata.Words = ParseWords(temp, automata);
+                }
+
+                count++;
+            }
+
+            //automata.AssignTransitions();
+            //automata.AssignGraphViz();
+
+            return automata;
+        }
 
         /// <summary>
         /// Parses the file with format for finite automata
@@ -152,6 +261,78 @@ namespace ALE2
         }
 
         /// <summary>
+        /// Method to parse the transition, needs access to automaton to be able to find the states
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="automaton"></param>
+        /// <returns></returns>
+        private List<Transition> ParseTransitionsPDA(List<string> lines, Automaton automaton)
+        {
+            List<Transition> temp = new List<Transition>();
+            foreach (var item in lines)
+            {
+                if (item == "")
+                {
+                    continue;
+                }
+                if (item == "end.")
+                {
+                    break;
+                }
+                List<string> info = new List<string>();
+                info = StripValues(item, 6);
+                if (info.Count == 5)
+                {
+                    Transition tempTrans = new Transition(automaton.FindState(info[0]), automaton.FindState(info[4]), info[1][0]);
+                    tempTrans.removeFromStack = info[2];
+                    tempTrans.pushToStack = info[3];
+                    tempTrans.pdaValue = info[1] + "[" + info[2] + "," + info[3] + "]";
+                    temp.Add(tempTrans);
+                }
+                else if (info.Count < 4)
+                {
+                    Transition tempTrans = new Transition(automaton.FindState(info[0]), automaton.FindState(info[2]), info[1][0]);
+                    tempTrans.removeFromStack = "_";
+                    tempTrans.pushToStack = "_";
+                    //tempTrans.pdaValue = info[0] + "[" + info[2] + "," + info[3] + "]";
+                    temp.Add(tempTrans);
+                }
+
+                //else
+                //{
+                //    Transition tempTrans = new Transition(automaton.FindState(info[0]), automaton.FindState(info[2]), '_');
+                //    temp.Add(tempTrans);
+                //}
+                //if (info[1] == "_")//epsilon trans
+                //{
+                //    Transition tempTrans = new Transition(automaton.FindState(info[0]), automaton.FindState(info[2]), '_');
+                //    tempTrans.pushToStack = "_";
+                //    tempTrans.removeFromStack = "_";
+                //    temp.Add(tempTrans);
+                //}
+                //else if (info.Count < 4)
+                //{
+                //    Transition tempTrans = new Transition(automaton.FindState(info[0]), automaton.FindState(info[2]), info[1][0]);
+                //    tempTrans.removeFromStack = "_";
+                //    tempTrans.pushToStack = "_";
+                //    //tempTrans.pdaValue = info[0] + "[" + info[2] + "," + info[3] + "]";
+                //    temp.Add(tempTrans);
+                //}
+                //else
+                //{
+                //    Transition tempTrans = new Transition(automaton.FindState(info[0]), automaton.FindState(info[4]), info[1][0]);
+                //    tempTrans.removeFromStack = info[2];
+                //    tempTrans.pushToStack = info[3];
+                //    tempTrans.pdaValue = info[1] + "[" + info[2] + "," + info[3] + "]";
+                //    temp.Add(tempTrans);
+                //}
+
+            }
+
+            return temp;
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="lines"></param>
@@ -246,6 +427,14 @@ namespace ALE2
                 case 5:
                     words = line.Split(':').ToList();
 
+                    return words;
+                case 6:
+                    line = line.Replace("-->", ",");
+                    line = line.Replace("[", ",");
+                    words.Add(line.Replace("]", ","));
+                    words = words[0].Split(',').ToList();
+                    words = words.Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+                    words = words.Select(c => { c = c.Trim(); return c; }).ToList();
                     return words;
                 default:
                     break;

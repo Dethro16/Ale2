@@ -59,6 +59,8 @@
             this.label8 = new System.Windows.Forms.Label();
             this.btNFADFA = new System.Windows.Forms.Button();
             this.pBDFA = new System.Windows.Forms.PictureBox();
+            this.btREADPDA = new System.Windows.Forms.Button();
+            this.btnParsePDA = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -105,9 +107,9 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(12, 148);
+            this.pictureBox1.Location = new System.Drawing.Point(12, 144);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(487, 188);
+            this.pictureBox1.Size = new System.Drawing.Size(487, 192);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 6;
             this.pictureBox1.TabStop = false;
@@ -196,7 +198,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 79);
+            this.label1.Location = new System.Drawing.Point(12, 108);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(37, 13);
             this.label1.TabIndex = 12;
@@ -207,7 +209,7 @@
             this.tBString.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tBString.Location = new System.Drawing.Point(78, 76);
+            this.tBString.Location = new System.Drawing.Point(78, 105);
             this.tBString.Name = "tBString";
             this.tBString.Size = new System.Drawing.Size(199, 20);
             this.tBString.TabIndex = 13;
@@ -217,11 +219,11 @@
             this.btnParseString.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnParseString.Location = new System.Drawing.Point(283, 76);
+            this.btnParseString.Location = new System.Drawing.Point(283, 91);
             this.btnParseString.Name = "btnParseString";
-            this.btnParseString.Size = new System.Drawing.Size(94, 23);
+            this.btnParseString.Size = new System.Drawing.Size(94, 34);
             this.btnParseString.TabIndex = 14;
-            this.btnParseString.Text = "Parse string";
+            this.btnParseString.Text = "Parse string NDFA";
             this.btnParseString.UseVisualStyleBackColor = true;
             this.btnParseString.Click += new System.EventHandler(this.btnParseString_Click);
             // 
@@ -231,7 +233,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(383, 79);
+            this.label4.Location = new System.Drawing.Point(258, 128);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(56, 13);
             this.label4.TabIndex = 15;
@@ -243,7 +245,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbAccepted.AutoSize = true;
-            this.lbAccepted.Location = new System.Drawing.Point(445, 79);
+            this.lbAccepted.Location = new System.Drawing.Point(320, 128);
             this.lbAccepted.Name = "lbAccepted";
             this.lbAccepted.Size = new System.Drawing.Size(59, 13);
             this.lbAccepted.TabIndex = 16;
@@ -345,7 +347,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(393, 105);
+            this.label7.Location = new System.Drawing.Point(385, 128);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(46, 13);
             this.label7.TabIndex = 32;
@@ -357,7 +359,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbFinite.AutoSize = true;
-            this.lbFinite.Location = new System.Drawing.Point(445, 105);
+            this.lbFinite.Location = new System.Drawing.Point(437, 128);
             this.lbFinite.Name = "lbFinite";
             this.lbFinite.Size = new System.Drawing.Size(59, 13);
             this.lbFinite.TabIndex = 34;
@@ -390,9 +392,9 @@
             this.btNFADFA.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btNFADFA.Location = new System.Drawing.Point(283, 105);
+            this.btNFADFA.Location = new System.Drawing.Point(386, 56);
             this.btNFADFA.Name = "btNFADFA";
-            this.btNFADFA.Size = new System.Drawing.Size(94, 21);
+            this.btNFADFA.Size = new System.Drawing.Size(113, 29);
             this.btNFADFA.TabIndex = 37;
             this.btNFADFA.Text = "NDFA to DFA";
             this.btNFADFA.UseVisualStyleBackColor = true;
@@ -407,11 +409,39 @@
             this.pBDFA.TabIndex = 38;
             this.pBDFA.TabStop = false;
             // 
+            // btREADPDA
+            // 
+            this.btREADPDA.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btREADPDA.Location = new System.Drawing.Point(283, 64);
+            this.btREADPDA.Name = "btREADPDA";
+            this.btREADPDA.Size = new System.Drawing.Size(94, 21);
+            this.btREADPDA.TabIndex = 39;
+            this.btREADPDA.Text = "Read PDA";
+            this.btREADPDA.UseVisualStyleBackColor = true;
+            this.btREADPDA.Click += new System.EventHandler(this.btREADPDA_Click);
+            // 
+            // btnParsePDA
+            // 
+            this.btnParsePDA.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnParsePDA.Location = new System.Drawing.Point(386, 91);
+            this.btnParsePDA.Name = "btnParsePDA";
+            this.btnParsePDA.Size = new System.Drawing.Size(113, 34);
+            this.btnParsePDA.TabIndex = 40;
+            this.btnParsePDA.Text = "Parse string PDA";
+            this.btnParsePDA.UseVisualStyleBackColor = true;
+            this.btnParsePDA.Click += new System.EventHandler(this.btnParsePDA_Click);
+            // 
             // ALE
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1350, 729);
+            this.Controls.Add(this.btnParsePDA);
+            this.Controls.Add(this.btREADPDA);
             this.Controls.Add(this.pBDFA);
             this.Controls.Add(this.btNFADFA);
             this.Controls.Add(this.label8);
@@ -487,6 +517,8 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btNFADFA;
         private System.Windows.Forms.PictureBox pBDFA;
+        private System.Windows.Forms.Button btREADPDA;
+        private System.Windows.Forms.Button btnParsePDA;
     }
 }
 
